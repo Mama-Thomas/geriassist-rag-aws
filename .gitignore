@@ -205,3 +205,34 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# === GeriAssist Custom ===
+
+# Environment secrets
+.env
+
+# Virtual environment
+venv/
+.venv/
+
+# FAISS index files
+*.faiss
+faiss_index/
+
+# Data files (too large for git)
+data/raw/
+data/processed/
+
+# Node
+node_modules/
+frontend/build/
+
+# Docker
+*.log
+
+# OS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
