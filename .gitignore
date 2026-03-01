@@ -236,3 +236,7 @@ frontend/build/
 # IDE
 .vscode/
 .idea/
+
+# Local test documents
+*.pdf
+test_doc.pdf
