@@ -165,3 +165,64 @@ async def list_documents(db: Session = Depends(get_db)):
         }
         for d in docs
     ]
+
+#phase 3; step 5
+# ── S3 Routes ─────────────────────────────────
+
+from app.aws.s3 import (
+    list_documents as s3_list_documents,
+    backup_faiss_index,
+    restore_faiss_index,
+    get_faiss_backup_info,
+    upload_document as s3_upload_document,
+)
+from app.ingestion.s3_ingest import ingest_from_s3
+
+
+@app.get("/s3/documents")
+async def list_s3_docs(category: str = None):
+    docs = s3_list_documents(category=category)
+    return {"bucket": os.getenv("AWS_S3_BUCKET"), "count": len(docs), "documents": docs}
+
+
+@app.post("/s3/upload")
+async def upload_to_s3(
+    file: UploadFile = File(...),
+    category: str = Form("other"),
+):
+    os.makedirs("data/uploads", exist_ok=True)
+    local_path = f"data/uploads/{file.filename}"
+    with open(local_path, "wb") as f:
+        shutil.copyfileobj(file.file, f)
+    try:
+        s3_key = s3_upload_document(local_path, category=category)
+        return {"message": "Uploaded to S3", "s3_key": s3_key, "bucket": os.getenv("AWS_S3_BUCKET")}
+    finally:
+        if os.path.exists(local_path):
+            os.remove(local_path)
+
+
+@app.post("/s3/ingest")
+async def ingest_from_s3_endpoint(category: str = None, db: Session = Depends(get_db)):
+    return ingest_from_s3(vector_store=vector_store, db=db, category=category)
+
+
+@app.post("/s3/backup-index")
+async def backup_index_endpoint():
+    success = backup_faiss_index()
+    return {"message": "Backed up" if success else "Failed", "success": success}
+
+
+@app.post("/s3/restore-index")
+async def restore_index_endpoint():
+    success = restore_faiss_index()
+    if success:
+        global vector_store
+        vector_store = FAISSVectorStore(
+            dimension=1536, index_path=os.getenv("FAISS_INDEX_PATH", "faiss_index"))
+    return {"success": success, "total_vectors": vector_store.total_vectors}
+
+
+@app.get("/s3/backup-info")
+async def backup_info_endpoint():
+    return {"bucket": os.getenv("AWS_S3_BUCKET"), "backup": get_faiss_backup_info()}
