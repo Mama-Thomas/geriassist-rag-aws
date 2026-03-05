@@ -269,3 +269,33 @@ async def get_eval_results():
         raise HTTPException(status_code=404, detail="No evaluation results found. Run /evaluation/run first.")
     with open(path, "r") as f:
         return json.load(f)
+    
+
+# ── Agent Routes ──────────────────────────────
+
+from app.agent.orchestrator import agent_query
+
+
+@app.post("/query/agent")
+async def agent_query_endpoint(
+    request: QueryRequest,
+    db: Session = Depends(get_db),
+):
+    """
+    Agentic RAG pipeline:
+    1. Router Agent classifies intent and plans search strategy
+    2. Research Agent iteratively retrieves and evaluates sufficiency
+    3. Returns answer with full agent trace
+    """
+    if not request.question.strip():
+        raise HTTPException(status_code=400, detail="Question cannot be empty")
+    if vector_store.total_vectors == 0:
+        raise HTTPException(status_code=400, detail="No documents ingested yet")
+
+    result = agent_query(
+        question=request.question,
+        vector_store=vector_store,
+        db=db,
+        top_k=request.top_k,
+    )
+    return result
