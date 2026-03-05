@@ -1,5 +1,6 @@
 import os
 import shutil
+import json
 from fastapi import FastAPI, Depends, UploadFile, File, Form, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -226,3 +227,45 @@ async def restore_index_endpoint():
 @app.get("/s3/backup-info")
 async def backup_info_endpoint():
     return {"bucket": os.getenv("AWS_S3_BUCKET"), "backup": get_faiss_backup_info()}
+
+#phase 5
+# ── Evaluation Routes ─────────────────────────
+
+from app.evaluation.evaluator import (
+    run_full_evaluation,
+    load_benchmark_questions,
+)
+
+
+@app.get("/evaluation/questions")
+async def list_eval_questions():
+    """List all benchmark questions."""
+    questions = load_benchmark_questions()
+    return {"count": len(questions), "questions": questions}
+
+
+@app.post("/evaluation/run")
+async def run_evaluation(
+    run_rag: bool = True,
+    db: Session = Depends(get_db),
+):
+    """
+    Run the full evaluation suite.
+    Warning: with run_rag=True, this calls OpenAI 30 times (~$0.05-0.10).
+    """
+    report = run_full_evaluation(
+        vector_store=vector_store,
+        db=db,
+        run_rag=run_rag,
+    )
+    return report
+
+
+@app.get("/evaluation/results")
+async def get_eval_results():
+    """Get the most recent evaluation results."""
+    path = "evaluation_results.json"
+    if not os.path.exists(path):
+        raise HTTPException(status_code=404, detail="No evaluation results found. Run /evaluation/run first.")
+    with open(path, "r") as f:
+        return json.load(f)

@@ -1,0 +1,212 @@
+[
+  {
+    "id": "q01",
+    "question": "What are the main risk factors for falls in elderly patients?",
+    "expected_topics": ["medications", "balance", "vision", "home hazards", "muscle weakness"],
+    "expected_sources": ["CDC", "NIA"],
+    "category": "fall_prevention"
+  },
+  {
+    "id": "q02",
+    "question": "How does the STEADI initiative screen for fall risk?",
+    "expected_topics": ["screening", "algorithm", "stay independent", "assessment", "three questions"],
+    "expected_sources": ["CDC"],
+    "category": "fall_prevention"
+  },
+  {
+    "id": "q03",
+    "question": "What home modifications can reduce fall risk for older adults?",
+    "expected_topics": ["lighting", "grab bars", "rugs", "stairs", "bathroom"],
+    "expected_sources": ["CDC", "NIA"],
+    "category": "fall_prevention"
+  },
+  {
+    "id": "q04",
+    "question": "What medications increase fall risk in older adults?",
+    "expected_topics": ["sedatives", "antihypertensives", "psychotropics", "polypharmacy", "blood pressure"],
+    "expected_sources": ["CDC", "NIA"],
+    "category": "medication_safety"
+  },
+  {
+    "id": "q05",
+    "question": "What are tips for taking medications safely as you age?",
+    "expected_topics": ["list", "side effects", "pharmacist", "doctor", "interactions"],
+    "expected_sources": ["NIA"],
+    "category": "medication_safety"
+  },
+  {
+    "id": "q06",
+    "question": "What are the early signs and symptoms of Alzheimers disease?",
+    "expected_topics": ["memory loss", "confusion", "difficulty", "judgment", "mood changes"],
+    "expected_sources": ["NIA"],
+    "category": "dementia"
+  },
+  {
+    "id": "q07",
+    "question": "How should caregivers manage behavioral symptoms in dementia patients?",
+    "expected_topics": ["routine", "communication", "environment", "safety", "patience"],
+    "expected_sources": ["NIA"],
+    "category": "dementia"
+  },
+  {
+    "id": "q08",
+    "question": "What support resources are available for Alzheimer's caregivers?",
+    "expected_topics": ["support groups", "respite care", "helpline", "planning", "self-care"],
+    "expected_sources": ["NIA"],
+    "category": "caregiving"
+  },
+  {
+    "id": "q09",
+    "question": "What is healthy aging and how can older adults maintain their health?",
+    "expected_topics": ["exercise", "nutrition", "social", "mental", "preventive care"],
+    "expected_sources": ["NIA", "WHO"],
+    "category": "healthy_aging"
+  },
+  {
+    "id": "q10",
+    "question": "What exercise recommendations exist for adults over 65?",
+    "expected_topics": ["strength", "balance", "aerobic", "flexibility", "minutes per week"],
+    "expected_sources": ["NIA"],
+    "category": "healthy_aging"
+  },
+  {
+    "id": "q11",
+    "question": "How does high blood pressure affect older adults and how is it managed?",
+    "expected_topics": ["heart disease", "stroke", "medication", "lifestyle", "monitoring"],
+    "expected_sources": ["NIA"],
+    "category": "chronic_conditions"
+  },
+  {
+    "id": "q12",
+    "question": "What are common sleep problems in older adults and how can they be addressed?",
+    "expected_topics": ["insomnia", "sleep hygiene", "medications", "routine", "napping"],
+    "expected_sources": ["NIA"],
+    "category": "healthy_aging"
+  },
+  {
+    "id": "q13",
+    "question": "How can older adults prevent memory loss and maintain cognitive health?",
+    "expected_topics": ["exercise", "social activity", "mental stimulation", "sleep", "nutrition"],
+    "expected_sources": ["NIA"],
+    "category": "cognitive_health"
+  },
+  {
+    "id": "q14",
+    "question": "What is the WHO Decade of Healthy Ageing and what are its goals?",
+    "expected_topics": ["2021-2030", "age-friendly", "integrated care", "long-term care", "ageism"],
+    "expected_sources": ["WHO"],
+    "category": "policy"
+  },
+  {
+    "id": "q15",
+    "question": "What is integrated care for older people according to WHO guidelines?",
+    "expected_topics": ["person-centred", "primary care", "functional ability", "coordination", "community"],
+    "expected_sources": ["WHO"],
+    "category": "policy"
+  },
+  {
+    "id": "q16",
+    "question": "What are the key components of a comprehensive geriatric assessment?",
+    "expected_topics": ["functional", "cognitive", "medical", "social", "nutrition"],
+    "expected_sources": ["CDC", "NIA"],
+    "category": "assessment"
+  },
+  {
+    "id": "q17",
+    "question": "How can chronic pain be managed in older adults?",
+    "expected_topics": ["medication", "physical therapy", "non-drug", "side effects", "assessment"],
+    "expected_sources": ["NIA"],
+    "category": "chronic_conditions"
+  },
+  {
+    "id": "q18",
+    "question": "What dietary supplements are important for older adults?",
+    "expected_topics": ["vitamin D", "calcium", "B12", "doctor", "interactions"],
+    "expected_sources": ["NIA"],
+    "category": "nutrition"
+  },
+  {
+    "id": "q19",
+    "question": "How can older adults communicate effectively with their healthcare providers?",
+    "expected_topics": ["questions", "list", "medications", "concerns", "follow-up"],
+    "expected_sources": ["NIA"],
+    "category": "healthcare"
+  },
+  {
+    "id": "q20",
+    "question": "What are the signs of depression in older adults?",
+    "expected_topics": ["sadness", "loss of interest", "fatigue", "sleep changes", "treatment"],
+    "expected_sources": ["NIA"],
+    "category": "mental_health"
+  },
+  {
+    "id": "q21",
+    "question": "How does alcohol affect older adults differently than younger people?",
+    "expected_topics": ["metabolism", "medications", "balance", "falls", "health conditions"],
+    "expected_sources": ["NIA"],
+    "category": "substance_use"
+  },
+  {
+    "id": "q22",
+    "question": "What are age-friendly environments and why do they matter?",
+    "expected_topics": ["housing", "transportation", "community", "accessibility", "social participation"],
+    "expected_sources": ["WHO"],
+    "category": "policy"
+  },
+  {
+    "id": "q23",
+    "question": "How can caregivers protect themselves from burnout?",
+    "expected_topics": ["respite", "support", "boundaries", "health", "help"],
+    "expected_sources": ["NIA"],
+    "category": "caregiving"
+  },
+  {
+    "id": "q24",
+    "question": "What balance and strength exercises reduce fall risk?",
+    "expected_topics": ["chair rise", "heel-to-toe", "standing", "leg strength", "practice"],
+    "expected_sources": ["CDC", "NIA"],
+    "category": "fall_prevention"
+  },
+  {
+    "id": "q25",
+    "question": "What is ageism and what are its health consequences?",
+    "expected_topics": ["discrimination", "stereotypes", "health outcomes", "mental health", "access to care"],
+    "expected_sources": ["WHO"],
+    "category": "policy"
+  },
+  {
+    "id": "q26",
+    "question": "How should older adults prepare for cold weather safety?",
+    "expected_topics": ["hypothermia", "frostbite", "heating", "clothing", "warning signs"],
+    "expected_sources": ["NIA"],
+    "category": "safety"
+  },
+  {
+    "id": "q27",
+    "question": "What is the coordinated care plan approach in the STEADI program?",
+    "expected_topics": ["assessment", "intervention", "follow-up", "team", "patient education"],
+    "expected_sources": ["CDC"],
+    "category": "fall_prevention"
+  },
+  {
+    "id": "q28",
+    "question": "What functional ability means for older adults according to the WHO?",
+    "expected_topics": ["intrinsic capacity", "environment", "activities", "independence", "well-being"],
+    "expected_sources": ["WHO"],
+    "category": "policy"
+  },
+  {
+    "id": "q29",
+    "question": "How does aging in place work and what supports are needed?",
+    "expected_topics": ["home modifications", "community services", "technology", "caregiving", "planning"],
+    "expected_sources": ["NIA"],
+    "category": "healthy_aging"
+  },
+  {
+    "id": "q30",
+    "question": "What strategies help older adults maintain social connections and avoid isolation?",
+    "expected_topics": ["community", "volunteering", "technology", "family", "activities"],
+    "expected_sources": ["NIA", "WHO"],
+    "category": "mental_health"
+  }
+]
