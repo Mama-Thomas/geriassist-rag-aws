@@ -50,6 +50,15 @@ Rules:
 4. Be precise and use clinical language appropriate for healthcare professionals.
 5. Never fabricate information not present in the provided context.
 6. Structure your answer clearly with key points.
+{sufficiency_note}
+"""
+
+CONFIDENT_NOTE = ""
+CAUTIOUS_NOTE = """
+IMPORTANT: The retrieval system found limited information on some aspects of this question.
+Be transparent about what the available sources cover well and what they do not.
+Start your answer with: "Based on the available sources in the knowledge base..."
+If there are aspects you cannot address from the context, explicitly state what information is missing.
 """
 
 
@@ -226,6 +235,15 @@ def research_query(
 
         current_round += 1
 
+    # Determine if we should be cautious based on last sufficiency eval
+    last_confidence = 1.0
+    for step in reversed(agent_steps):
+        if step.get("action") == "evaluate":
+            last_confidence = step.get("confidence", 1.0)
+            break
+
+    sufficiency_note = CAUTIOUS_NOTE if last_confidence < 0.7 else CONFIDENT_NOTE
+
     # Generate final answer with all collected context
     context = _build_context_string(all_chunks)
     user_prompt = (
@@ -234,15 +252,18 @@ def research_query(
         f"Provide a detailed, citation-grounded answer."
     )
 
+    system_prompt = GENERATION_PROMPT.format(sufficiency_note=sufficiency_note)
+
     gen_response = client.chat.completions.create(
         model=os.getenv("LLM_MODEL", "gpt-4o-mini"),
         messages=[
-            {"role": "system", "content": GENERATION_PROMPT},
+            {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt},
         ],
         temperature=0.2,
         max_tokens=1000,
     )
+    
 
     answer = gen_response.choices[0].message.content
     gen_tokens = gen_response.usage.total_tokens if gen_response.usage else 0
@@ -260,13 +281,18 @@ def research_query(
     db.commit()
 
     # Build citations
-    citations = [
-        {
-            "source": c["title"],
-            "snippet": c["chunk_text"][:200] + "...",
-        }
-        for c in all_chunks
-    ]
+    # Build deduplicated citations (max 2 per source)
+    source_counts = {}
+    citations = []
+    for c in all_chunks:
+        source_name = c["title"]
+        count = source_counts.get(source_name, 0)
+        if count < 2:
+            citations.append({
+                "source": source_name,
+                "snippet": c["chunk_text"][:200] + "...",
+            })
+            source_counts[source_name] = count + 1
 
     return {
         "answer": answer,
@@ -274,6 +300,7 @@ def research_query(
         "latency_ms": total_latency_ms,
         "tokens_used": gen_tokens + total_eval_tokens,
         "chunks_used": len(all_chunks),
+        "sufficiency_confidence": last_confidence,
         "agent_metadata": {
             "total_rounds": current_round - 1 if current_round <= max_rounds else max_rounds,
             "total_unique_chunks": len(all_chunks),
