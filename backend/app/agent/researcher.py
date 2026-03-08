@@ -14,6 +14,7 @@ from dotenv import load_dotenv
 from app.db.models import Chunk, Document, QueryLog
 from app.retrieval.vector_store import FAISSVectorStore
 from app.ingestion.embeddings import generate_embedding
+from app.aws.s3 import generate_presigned_url
 
 load_dotenv()
 
@@ -46,7 +47,7 @@ GENERATION_PROMPT = """You are GeriAssist, a clinical knowledge assistant specia
 Rules:
 1. ONLY answer based on the provided context chunks below.
 2. If the context doesn't contain enough information, say so clearly.
-3. Always cite which source document(s) your answer draws from.
+3. Cite sources by their document TITLE (e.g., "according to the CDC STEADI Coordinated Care Plan"), NOT by source numbers like [Source 1]. Never use [Source 1], [Source 2] format.
 4. Be precise and use clinical language appropriate for healthcare professionals.
 5. Never fabricate information not present in the provided context.
 6. Structure your answer clearly with key points.
@@ -85,6 +86,7 @@ def _fetch_chunks_with_metadata(
                 "chunk_text": chunk.chunk_text,
                 "title": doc.title if doc else "Unknown",
                 "source": doc.source if doc else "Unknown",
+                "s3_path": doc.s3_path if doc else None,
                 "distance": result["distance"],
             })
 
@@ -282,6 +284,7 @@ def research_query(
 
     # Build citations
     # Build deduplicated citations (max 2 per source)
+    
     source_counts = {}
     citations = []
     for c in all_chunks:
@@ -291,6 +294,7 @@ def research_query(
             citations.append({
                 "source": source_name,
                 "snippet": c["chunk_text"][:200] + "...",
+                "pdf_url": generate_presigned_url(c["s3_path"]) if c.get("s3_path") else None,
             })
             source_counts[source_name] = count + 1
 

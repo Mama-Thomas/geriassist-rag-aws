@@ -120,3 +120,18 @@ def bulk_upload_directory(local_dir: str, category: str = "other") -> list[str]:
         if i % 10 == 0:
             print(f"   ... uploaded {i}/{len(files)}")
     return uploaded
+
+def generate_presigned_url(s3_key: str, expiration: int = 3600) -> str:
+    """
+    Generate a temporary presigned URL for a document.
+    Default expiration: 1 hour (3600 seconds).
+    """
+    try:
+        url = s3_client.generate_presigned_url(
+            "get_object",
+            Params={"Bucket": BUCKET_NAME, "Key": s3_key},
+            ExpiresIn=expiration,
+        )
+        return url
+    except ClientError:
+        return None

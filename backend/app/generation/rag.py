@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from app.db.models import Chunk, Document, QueryLog
 from app.retrieval.vector_store import FAISSVectorStore
 from app.ingestion.embeddings import generate_embedding
+from app.aws.s3 import generate_presigned_url
 
 load_dotenv()
 
@@ -17,7 +18,7 @@ SYSTEM_PROMPT = """You are GeriAssist, a clinical knowledge assistant specialize
 Rules:
 1. ONLY answer based on the provided context chunks below.
 2. If the context doesn't contain enough information, say so clearly.
-3. Always cite which source document(s) your answer draws from.
+3. Cite sources by their document TITLE (e.g., "according to the CDC STEADI Coordinated Care Plan"), NOT by source numbers like [Source 1]. Never use [Source 1], [Source 2] format.
 4. Be precise and use clinical language appropriate for healthcare professionals.
 5. Never fabricate information not present in the provided context.
 6. Structure your answer clearly with key points.
@@ -66,16 +67,15 @@ def query_rag(
         chunk = db.query(Chunk).filter(Chunk.id == result["chunk_id"]).first()
         if chunk:
             doc = db.query(Document).filter(Document.id == chunk.document_id).first()
-            chunks_with_metadata.append(
-                {
-                    "chunk_id": str(chunk.id),
-                    "chunk_text": chunk.chunk_text,
-                    "title": doc.title if doc else "Unknown",
-                    "source": doc.source if doc else "Unknown",
-                    "distance": result["distance"],
-                    "rank": result["rank"],
-                }
-            )
+            chunks_with_metadata.append({
+                "chunk_id": str(chunk.id),
+                "chunk_text": chunk.chunk_text,
+                "title": doc.title if doc else "Unknown",
+                "source": doc.source if doc else "Unknown",
+                "s3_path": doc.s3_path if doc else None,
+                "distance": result["distance"],
+                "rank": result["rank"],
+            })
 
     # 4. Build prompt
     context = build_context_prompt(chunks_with_metadata)
@@ -112,11 +112,13 @@ def query_rag(
     db.commit()
 
     # 7. Build response
+
     citations = [
         {
             "source": item["title"],
             "snippet": item["chunk_text"][:200] + "...",
             "rank": item["rank"],
+            "pdf_url": generate_presigned_url(item["s3_path"]) if item.get("s3_path") else None,
         }
         for item in chunks_with_metadata
     ]
