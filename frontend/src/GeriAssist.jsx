@@ -1,287 +1,214 @@
 import { useState, useEffect, useRef } from "react";
 
-const COLORS = {
-  bg: "#0a0f1a",
-  surface: "#111827",
-  surfaceHover: "#1a2235",
-  border: "#1e293b",
-  borderActive: "#3b82f6",
-  text: "#e2e8f0",
-  textMuted: "#64748b",
-  textDim: "#475569",
-  accent: "#3b82f6",
-  accentGlow: "rgba(59, 130, 246, 0.15)",
-  accentSoft: "rgba(59, 130, 246, 0.08)",
-  green: "#10b981",
-  greenSoft: "rgba(16, 185, 129, 0.1)",
-  amber: "#f59e0b",
-  amberSoft: "rgba(245, 158, 11, 0.1)",
-  red: "#ef4444",
-  redSoft: "rgba(239, 68, 68, 0.1)",
+// ── Design: Editorial Clinical ──
+// White background, burgundy accents, no gradients, no shadows
+// Typography: Cormorant Garamond (display) + Source Sans 3 (body) + IBM Plex Mono (data)
+
+const C = {
+  bg: "#FAFAF8",
+  surface: "#FFFFFF",
+  surfaceAlt: "#F5F3F0",
+  border: "#E8E4DF",
+  borderHover: "#8B2332",
+  text: "#1A1A1A",
+  textSecondary: "#4A4A4A",
+  textMuted: "#8A8A8A",
+  textLight: "#B0A8A0",
+  burgundy: "#8B2332",
+  burgundyLight: "#A93545",
+  burgundySoft: "rgba(139, 35, 50, 0.06)",
+  burgundyBorder: "rgba(139, 35, 50, 0.15)",
+  white: "#FFFFFF",
+  green: "#2D7A4F",
+  greenSoft: "rgba(45, 122, 79, 0.08)",
+  amber: "#A0722A",
+  amberSoft: "rgba(160, 114, 42, 0.08)",
+  red: "#9B2C2C",
 };
 
-
+const FONT = {
+  display: "'Cormorant Garamond', Georgia, serif",
+  body: "'Source Sans 3', 'Source Sans Pro', sans-serif",
+  mono: "'IBM Plex Mono', 'Courier New', monospace",
+};
 
 // ── Markdown renderer ──
-function renderMarkdown(text) {
+function Md({ text }) {
   if (!text) return null;
-  const lines = text.split("\n");
-  const elements = [];
-  let key = 0;
 
-  for (let i = 0; i < lines.length; i++) {
-    let line = lines[i];
-    if (!line.trim()) { elements.push(<div key={key++} style={{ height: 12 }} />); continue; }
-
+  // Process bold in a string
+  function bold(str) {
     const parts = [];
-    let remaining = line;
-    let partKey = 0;
-    while (remaining.includes("**")) {
-      const start = remaining.indexOf("**");
-      if (start > 0) parts.push(<span key={partKey++}>{remaining.slice(0, start)}</span>);
-      remaining = remaining.slice(start + 2);
-      const end = remaining.indexOf("**");
-      if (end === -1) { parts.push(<span key={partKey++}>**{remaining}</span>); remaining = ""; break; }
-      parts.push(<strong key={partKey++} style={{ color: COLORS.text, fontWeight: 600 }}>{remaining.slice(0, end)}</strong>);
-      remaining = remaining.slice(end + 2);
+    let rem = str,
+      pk = 0;
+    while (rem.includes("**")) {
+      const s = rem.indexOf("**");
+      if (s > 0) parts.push(<span key={pk++}>{rem.slice(0, s)}</span>);
+      rem = rem.slice(s + 2);
+      const e = rem.indexOf("**");
+      if (e === -1) {
+        parts.push(<span key={pk++}>**{rem}</span>);
+        rem = "";
+        break;
+      }
+      parts.push(
+        <strong key={pk++} style={{ fontWeight: 600, color: C.text }}>
+          {rem.slice(0, e)}
+        </strong>,
+      );
+      rem = rem.slice(e + 2);
     }
-    if (remaining) parts.push(<span key={partKey++}>{remaining}</span>);
+    if (rem) parts.push(<span key={pk++}>{rem}</span>);
+    return parts.length > 1 ? parts : str;
+  }
 
-    if (line.startsWith("### ")) {
-      elements.push(<div key={key++} style={{ fontSize: 15, fontWeight: 700, color: COLORS.text, marginTop: 16, marginBottom: 6 }}>{line.replace("### ", "")}</div>);
-    } else if (/^\d+\.\s/.test(line.trim())) {
-      elements.push(
-        <div key={key++} style={{ paddingLeft: 8, marginBottom: 4, display: "flex", gap: 8 }}>
-          <span style={{ color: COLORS.accent, fontWeight: 600, flexShrink: 0 }}>{line.trim().match(/^\d+\./)[0]}</span>
-          <span>{parts.length > 1 ? parts : line.trim().replace(/^\d+\.\s*/, "")}</span>
-        </div>
+  const lines = text.split("\n");
+  const els = [];
+  let k = 0;
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (!trimmed) {
+      els.push(<div key={k++} style={{ height: 10 }} />);
+      continue;
+    }
+
+    // Heading
+    if (trimmed.startsWith("### ")) {
+      els.push(
+        <div
+          key={k++}
+          style={{
+            fontSize: 15,
+            fontWeight: 600,
+            color: C.text,
+            marginTop: 20,
+            marginBottom: 6,
+            fontFamily: FONT.body,
+          }}
+        >
+          {bold(trimmed.slice(4))}
+        </div>,
       );
-    } else if (line.trim().startsWith("- ") || line.trim().startsWith("• ")) {
-      elements.push(
-        <div key={key++} style={{ paddingLeft: 16, marginBottom: 4, display: "flex", gap: 8 }}>
-          <span style={{ color: COLORS.accent }}>•</span>
-          <span>{parts.length > 1 ? parts : line.trim().replace(/^[-•]\s*/, "")}</span>
-        </div>
+    }
+    // Numbered list
+    else if (/^\d+\.\s/.test(trimmed)) {
+      const num = trimmed.match(/^\d+\./)[0];
+      const rest = trimmed.replace(/^\d+\.\s*/, "");
+      els.push(
+        <div
+          key={k++}
+          style={{ display: "flex", gap: 10, marginBottom: 3, paddingLeft: 4 }}
+        >
+          <span
+            style={{
+              color: C.burgundy,
+              fontWeight: 600,
+              fontFamily: FONT.mono,
+              fontSize: 13,
+              flexShrink: 0,
+              minWidth: 20,
+            }}
+          >
+            {num}
+          </span>
+          <span style={{ flex: 1 }}>{bold(rest)}</span>
+        </div>,
       );
-    } else {
-      elements.push(<div key={key++} style={{ marginBottom: 4 }}>{parts.length > 1 ? parts : line}</div>);
+    }
+    // Bullet (handles "- ", "• ", "●- ", "● - ", etc.)
+    else if (/^[●•\-]\s*[-●•]?\s*/.test(trimmed)) {
+      const rest = trimmed.replace(/^[●•\-]\s*[-●•]?\s*/, "");
+      els.push(
+        <div
+          key={k++}
+          style={{ display: "flex", gap: 10, marginBottom: 3, paddingLeft: 12 }}
+        >
+          <span style={{ color: C.burgundy, fontSize: 5, marginTop: 9 }}>
+            ●
+          </span>
+          <span style={{ flex: 1 }}>{bold(rest)}</span>
+        </div>,
+      );
+    }
+    // Plain text
+    else {
+      els.push(
+        <div key={k++} style={{ marginBottom: 3 }}>
+          {bold(trimmed)}
+        </div>,
+      );
     }
   }
-  return elements;
+  return <>{els}</>;
 }
 
 // ── Typing indicator ──
-function TypingIndicator() {
+function Typing() {
   return (
-    <div style={{ display: "flex", gap: 6, padding: "20px 0", alignItems: "center" }}>
-      <div style={{ width: 24, height: 24, borderRadius: "50%", background: `linear-gradient(135deg, ${COLORS.accent}, #8b5cf6)`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700, color: "#fff" }}>G</div>
-      <div style={{ display: "flex", gap: 4, marginLeft: 8 }}>
-        {[0, 1, 2].map(i => (<div key={i} style={{ width: 6, height: 6, borderRadius: "50%", background: COLORS.textMuted, animation: `pulse 1.4s ease-in-out ${i * 0.2}s infinite` }} />))}
-      </div>
-      <style>{`@keyframes pulse { 0%,80%,100% { opacity:0.3; transform:scale(0.8); } 40% { opacity:1; transform:scale(1.2); } }`}</style>
+    <div
+      style={{
+        display: "flex",
+        gap: 5,
+        padding: "24px 0",
+        alignItems: "center",
+      }}
+    >
+      <span
+        style={{
+          fontSize: 13,
+          color: C.burgundy,
+          fontFamily: FONT.body,
+          fontWeight: 600,
+          marginRight: 8,
+        }}
+      >
+        GeriAssist
+      </span>
+      {[0, 1, 2].map((i) => (
+        <div
+          key={i}
+          style={{
+            width: 4,
+            height: 4,
+            borderRadius: "50%",
+            background: C.burgundy,
+            animation: `dot 1.2s ease-in-out ${i * 0.15}s infinite`,
+          }}
+        />
+      ))}
+      <style>{`@keyframes dot { 0%,80%,100% { opacity:0.2 } 40% { opacity:1 } }`}</style>
     </div>
   );
 }
 
-// ── Citations panel with dedup, sequential numbering, and PDF links ──
-function CitationsPanel({ citations }) {
-  const [expandedSource, setExpandedSource] = useState(null);
-  if (!citations?.length) return null;
-
-  // Group by source, filter test docs
-  const grouped = {};
-  citations.forEach((c) => {
-    const name = c.source;
-    if (name.toLowerCase().includes("test doc") || name.toLowerCase().includes("test_doc")) return;
-    if (!grouped[name]) grouped[name] = [];
-    grouped[name].push(c);
-  });
-
-  const sources = Object.entries(grouped);
-  if (!sources.length) return null;
-
-  return (
-    <div style={{ marginTop: 16 }}>
-      <div style={{ fontSize: 11, fontWeight: 700, color: COLORS.textMuted, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 10, fontFamily: "'DM Sans', sans-serif" }}>
-        Sources ({sources.length})
-      </div>
-      <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-        {sources.map(([sourceName, snippets], sourceIndex) => {
-          const isExpanded = expandedSource === sourceName;
-          const pdfUrl = snippets[0]?.pdf_url || null;
-          return (
-            <div key={sourceName} style={{ background: COLORS.accentSoft, border: `1px solid ${isExpanded ? COLORS.accent : COLORS.border}`, borderRadius: 8, overflow: "hidden", transition: "all 0.2s ease" }}>
-              <div
-                onClick={() => setExpandedSource(isExpanded ? null : sourceName)}
-                style={{ padding: "10px 14px", cursor: "pointer" }}
-                onMouseEnter={e => { e.currentTarget.parentElement.style.borderColor = COLORS.accent; }}
-                onMouseLeave={e => { if (!isExpanded) e.currentTarget.parentElement.style.borderColor = COLORS.border; }}
-              >
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    <span style={{ background: COLORS.accent, color: "#fff", fontSize: 10, fontWeight: 700, padding: "2px 7px", borderRadius: 4, fontFamily: "'JetBrains Mono', monospace" }}>
-                      {sourceIndex + 1}
-                    </span>
-                    <span style={{ fontSize: 13, fontWeight: 600, color: COLORS.text, fontFamily: "'DM Sans', sans-serif" }}>{sourceName}</span>
-                    {snippets.length > 1 && (
-                      <span style={{ fontSize: 10, color: COLORS.textDim, fontFamily: "'JetBrains Mono', monospace" }}>
-                        ({snippets.length} refs)
-                      </span>
-                    )}
-                  </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    {pdfUrl && (
-                      <a
-                        href={pdfUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={e => e.stopPropagation()}
-                        style={{ fontSize: 11, color: COLORS.accent, textDecoration: "none", fontFamily: "'DM Sans', sans-serif", padding: "2px 8px", borderRadius: 4, border: `1px solid ${COLORS.accent}30`, transition: "all 0.15s" }}
-                        onMouseEnter={e => { e.currentTarget.style.background = COLORS.accentGlow; }}
-                        onMouseLeave={e => { e.currentTarget.style.background = "transparent"; }}
-                      >
-                        View Source ↗
-                      </a>
-                    )}
-                    <span style={{ fontSize: 11, color: COLORS.textMuted, transform: isExpanded ? "rotate(180deg)" : "rotate(0)", transition: "transform 0.2s" }}>▼</span>
-                  </div>
-                </div>
-              </div>
-              {isExpanded && (
-                <div style={{ padding: "0 14px 12px", borderTop: `1px solid ${COLORS.border}`, marginTop: 0, paddingTop: 10, display: "flex", flexDirection: "column", gap: 8 }}>
-                  {snippets.map((s, idx) => (
-                    <div key={idx} style={{ fontSize: 12, color: COLORS.textMuted, lineHeight: 1.6, fontFamily: "'DM Sans', sans-serif", paddingLeft: 8, borderLeft: `2px solid ${COLORS.accent}30` }}>
-                      {s.snippet}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-// ── Metric badge ──
-function MetricBadge({ label, value, color = COLORS.textMuted }) {
-  return (
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2, padding: "8px 16px", background: COLORS.surface, borderRadius: 8, border: `1px solid ${COLORS.border}`, minWidth: 80 }}>
-      <span style={{ fontSize: 16, fontWeight: 700, color, fontFamily: "'JetBrains Mono', monospace" }}>{value}</span>
-      <span style={{ fontSize: 10, color: COLORS.textDim, textTransform: "uppercase", letterSpacing: "0.05em", fontFamily: "'DM Sans', sans-serif" }}>{label}</span>
-    </div>
-  );
-}
-
-// ── Agent trace ──
-function AgentTrace({ metadata }) {
-  if (!metadata?.steps) return null;
-  return (
-    <div style={{ marginTop: 16, padding: 16, background: COLORS.bg, borderRadius: 10, border: `1px solid ${COLORS.border}` }}>
-      <div style={{ fontSize: 11, fontWeight: 700, color: COLORS.textMuted, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 12, fontFamily: "'DM Sans', sans-serif" }}>Agent Trace</div>
-      <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-        {metadata.steps.map((step, i) => (
-          <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 12, fontFamily: "'JetBrains Mono', monospace" }}>
-            <span style={{ width: 20, height: 20, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 9, fontWeight: 700, color: "#fff", flexShrink: 0, background: step.action === "search" ? COLORS.accent : step.is_sufficient ? COLORS.green : COLORS.amber }}>
-              {step.action === "search" ? "S" : "E"}
-            </span>
-            <span style={{ color: COLORS.textMuted }}>R{step.round}</span>
-            {step.action === "search" ? (
-              <span style={{ color: COLORS.text }}>
-                Search: <span style={{ color: COLORS.accent }}>"{step.query?.slice(0, 50)}{step.query?.length > 50 ? "..." : ""}"</span>
-                <span style={{ color: COLORS.textDim, marginLeft: 8 }}>→ {step.new_chunks_added} new chunks</span>
-              </span>
-            ) : (
-              <span style={{ color: step.is_sufficient ? COLORS.green : COLORS.amber }}>
-                Evaluate: confidence {step.confidence} {step.is_sufficient ? "✓ sufficient" : "✗ insufficient"}
-              </span>
-            )}
-          </div>
-        ))}
-      </div>
-      {metadata.routing_plan && (
-        <div style={{ marginTop: 12, paddingTop: 12, borderTop: `1px solid ${COLORS.border}`, fontSize: 12, color: COLORS.textDim, fontFamily: "'DM Sans', sans-serif" }}>
-          <span style={{ color: COLORS.textMuted, fontWeight: 600 }}>Router:</span> {metadata.routing_plan.category} · {metadata.routing_plan.complexity}
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ── Follow-up suggestions ──
-function FollowUpSuggestions({ question, result, onSelect }) {
-  const [suggestions, setSuggestions] = useState([]);
-  useEffect(() => {
-    if (!result?.answer) return;
-    const q = question.toLowerCase();
-    const followUps = [];
-    if (q.includes("fall") || q.includes("steadi")) {
-      followUps.push("What exercises can reduce fall risk?", "How should medications be reviewed for fall prevention?", "What home modifications prevent falls?");
-    } else if (q.includes("dementia") || q.includes("alzheimer")) {
-      followUps.push("What caregiver resources are available?", "How does dementia affect fall risk?", "What are non-drug interventions for dementia?");
-    } else if (q.includes("medication") || q.includes("medicine")) {
-      followUps.push("What is polypharmacy and why is it risky?", "What does the Beers Criteria recommend?", "How should medication reviews be conducted?");
-    } else if (q.includes("exercise") || q.includes("physical")) {
-      followUps.push("What balance exercises are recommended?", "How does exercise reduce fall risk?", "What are the WHO guidelines on physical activity for older adults?");
-    } else if (q.includes("depression") || q.includes("mental")) {
-      followUps.push("How does depression affect fall risk?", "What are signs of isolation in older adults?", "What treatments exist for depression in older adults?");
-    } else if (q.includes("blood pressure") || q.includes("pain") || q.includes("sleep")) {
-      followUps.push("How does this condition affect fall risk?", "What are non-drug management options?", "What medications should be avoided?");
-    } else if (q.includes("who") || q.includes("policy") || q.includes("ageing")) {
-      followUps.push("What is integrated care for older people?", "What are age-friendly environments?", "What is the role of ageism in health outcomes?");
-    } else {
-      followUps.push("What are common fall risk factors for older adults?", "What does the CDC STEADI program recommend?", "How can caregivers support healthy aging?");
-    }
-    setSuggestions(followUps.slice(0, 3));
-  }, [question, result]);
-
-  if (!suggestions.length || !result) return null;
-  return (
-    <div style={{ marginTop: 20 }}>
-      <div style={{ fontSize: 11, fontWeight: 700, color: COLORS.textDim, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8, fontFamily: "'DM Sans', sans-serif" }}>Follow-up Questions</div>
-      <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-        {suggestions.map((s, i) => (
-          <button key={i} onClick={() => onSelect(s)} style={{ padding: "6px 12px", borderRadius: 8, border: `1px solid ${COLORS.border}`, background: COLORS.accentSoft, color: COLORS.textMuted, fontSize: 12, cursor: "pointer", fontFamily: "'DM Sans', sans-serif", transition: "all 0.15s" }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = COLORS.accent; e.currentTarget.style.color = COLORS.text; }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = COLORS.border; e.currentTarget.style.color = COLORS.textMuted; }}
-          >{s}</button>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function IconButton({ label, icon, onClick, isCopy }) {
-  const [hovered, setHovered] = useState(false);
-  const [clicked, setClicked] = useState(false);
+// ── Icon button with tooltip ──
+function IconBtn({ label, icon, onClick, isCopy }) {
+  const [hov, setHov] = useState(false);
+  const [done, setDone] = useState(false);
   return (
     <div
       style={{ position: "relative" }}
-      onMouseEnter={() => setHovered(true)}
+      onMouseEnter={() => setHov(true)}
       onMouseLeave={() => {
-        setHovered(false);
-        setClicked(false);
+        setHov(false);
+        setDone(false);
       }}
     >
       <button
         onClick={() => {
           onClick();
           if (isCopy) {
-            setClicked(true);
-            setTimeout(() => setClicked(false), 1500);
+            setDone(true);
+            setTimeout(() => setDone(false), 1500);
           }
         }}
         style={{
-          padding: 6,
-          borderRadius: 6,
+          padding: 5,
+          borderRadius: 4,
           border: "none",
-          background: hovered ? COLORS.surfaceHover : "transparent",
-          color: clicked
-            ? COLORS.green
-            : hovered
-              ? COLORS.text
-              : COLORS.textDim,
+          background: hov ? C.surfaceAlt : "transparent",
+          color: done ? C.green : hov ? C.text : C.textMuted,
           cursor: "pointer",
           transition: "all 0.15s",
           display: "flex",
@@ -290,92 +217,457 @@ function IconButton({ label, icon, onClick, isCopy }) {
       >
         {icon}
       </button>
-      {hovered && (
+      {hov && (
         <div
           style={{
             position: "absolute",
-            bottom: "calc(100% + 6px)",
+            bottom: "calc(100% + 4px)",
             left: "50%",
             transform: "translateX(-50%)",
-            padding: "4px 8px",
-            borderRadius: 4,
-            background: COLORS.text,
-            color: COLORS.bg,
-            fontSize: 11,
-            fontWeight: 500,
-            fontFamily: "'DM Sans', sans-serif",
+            padding: "3px 7px",
+            borderRadius: 3,
+            background: C.text,
+            color: C.white,
+            fontSize: 10,
+            fontFamily: FONT.body,
             whiteSpace: "nowrap",
             pointerEvents: "none",
           }}
         >
-          {clicked ? "Copied!" : label}
+          {done ? "Copied!" : label}
         </div>
       )}
     </div>
   );
 }
-// ── Answer block ──
-function AnswerBlock({ result, mode, onRegenerate }) {
-  if (!result) return null;
-  const isAgent = mode === "agent";
+
+// ── Citations ──
+function Sources({ citations }) {
+  const [open, setOpen] = useState(null);
+  if (!citations?.length) return null;
+
+  const grouped = {};
+  citations.forEach((c) => {
+    const n = c.source;
+    if (
+      n.toLowerCase().includes("test doc") ||
+      n.toLowerCase().includes("test_doc")
+    )
+      return;
+    if (!grouped[n]) grouped[n] = [];
+    grouped[n].push(c);
+  });
+
+  const items = Object.entries(grouped);
+  if (!items.length) return null;
+
   return (
-    <div style={{ animation: "fadeIn 0.4s ease-out", marginTop: 24 }}>
-      <style>{`@keyframes fadeIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }`}</style>
+    <div style={{ marginTop: 24 }}>
       <div
-        style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 20 }}
+        style={{
+          fontSize: 11,
+          fontWeight: 600,
+          color: C.textMuted,
+          textTransform: "uppercase",
+          letterSpacing: "0.1em",
+          marginBottom: 10,
+          fontFamily: FONT.body,
+        }}
       >
-        <MetricBadge
-          label="Latency"
-          value={`${(result.latency_ms / 1000).toFixed(1)}s`}
-          color={result.latency_ms < 10000 ? COLORS.green : COLORS.amber}
-        />
-        <MetricBadge
-          label="Chunks"
-          value={result.chunks_used}
-          color={COLORS.accent}
-        />
-        <MetricBadge
-          label="Tokens"
-          value={result.tokens_used?.toLocaleString()}
-        />
-        {isAgent && result.sufficiency_confidence != null && (
-          <MetricBadge
-            label="Confidence"
-            value={`${Math.round(result.sufficiency_confidence * 100)}%`}
-            color={
-              result.sufficiency_confidence >= 0.7 ? COLORS.green : COLORS.amber
-            }
-          />
-        )}
+        Sources ({items.length})
+      </div>
+      {items.map(([name, snips], i) => {
+        const isOpen = open === name;
+        const pdfUrl = snips[0]?.pdf_url || null;
+        return (
+          <div
+            key={name}
+            style={{
+              borderTop: `1px solid ${C.border}`,
+              transition: "all 0.2s",
+            }}
+          >
+            <div
+              onClick={() => setOpen(isOpen ? null : name)}
+              style={{
+                padding: "10px 0",
+                cursor: "pointer",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <span
+                  style={{
+                    fontFamily: FONT.mono,
+                    fontSize: 11,
+                    color: C.burgundy,
+                    fontWeight: 600,
+                    minWidth: 16,
+                  }}
+                >
+                  {i + 1}
+                </span>
+                <span
+                  style={{
+                    fontSize: 13,
+                    fontFamily: FONT.body,
+                    color: C.text,
+                    fontWeight: 500,
+                  }}
+                >
+                  {name}
+                </span>
+                {snips.length > 1 && (
+                  <span
+                    style={{
+                      fontSize: 10,
+                      color: C.textMuted,
+                      fontFamily: FONT.mono,
+                    }}
+                  >
+                    ({snips.length})
+                  </span>
+                )}
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                {pdfUrl && (
+                  <a
+                    href={pdfUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    style={{
+                      fontSize: 11,
+                      color: C.burgundy,
+                      textDecoration: "none",
+                      fontFamily: FONT.body,
+                      fontWeight: 500,
+                      borderBottom: `1px solid ${C.burgundyBorder}`,
+                      paddingBottom: 1,
+                      transition: "all 0.15s",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.borderColor = C.burgundy)
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.borderColor = C.burgundyBorder)
+                    }
+                  >
+                    View Source ↗
+                  </a>
+                )}
+                <span
+                  style={{
+                    fontSize: 10,
+                    color: C.textLight,
+                    transform: isOpen ? "rotate(180deg)" : "rotate(0)",
+                    transition: "transform 0.2s",
+                  }}
+                >
+                  ▾
+                </span>
+              </div>
+            </div>
+            {isOpen && (
+              <div style={{ paddingBottom: 12, paddingLeft: 26 }}>
+                {snips.map((s, idx) => (
+                  <div
+                    key={idx}
+                    style={{
+                      fontSize: 12,
+                      color: C.textSecondary,
+                      lineHeight: 1.7,
+                      fontFamily: FONT.body,
+                      marginBottom: 6,
+                      paddingLeft: 10,
+                      borderLeft: `2px solid ${C.burgundyBorder}`,
+                    }}
+                  >
+                    {s.snippet}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// ── Metric ──
+function Stat({ label, value, accent }) {
+  return (
+    <div style={{ textAlign: "center", minWidth: 70 }}>
+      <div
+        style={{
+          fontSize: 15,
+          fontWeight: 600,
+          color: accent || C.text,
+          fontFamily: FONT.mono,
+        }}
+      >
+        {value}
       </div>
       <div
         style={{
-          background: COLORS.surface,
-          borderRadius: 12,
-          border: `1px solid ${COLORS.border}`,
-          padding: 24,
+          fontSize: 9,
+          color: C.textMuted,
+          textTransform: "uppercase",
+          letterSpacing: "0.08em",
+          fontFamily: FONT.body,
+          marginTop: 2,
         }}
       >
+        {label}
+      </div>
+    </div>
+  );
+}
+
+// ── Agent trace ──
+function Trace({ metadata }) {
+  if (!metadata?.steps) return null;
+  return (
+    <div
+      style={{
+        marginTop: 20,
+        padding: "16px 0",
+        borderTop: `1px solid ${C.border}`,
+      }}
+    >
+      <div
+        style={{
+          fontSize: 10,
+          fontWeight: 600,
+          color: C.textMuted,
+          textTransform: "uppercase",
+          letterSpacing: "0.1em",
+          marginBottom: 10,
+          fontFamily: FONT.body,
+        }}
+      >
+        Agent Trace
+      </div>
+      {metadata.steps.map((s, i) => (
+        <div
+          key={i}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            fontSize: 12,
+            fontFamily: FONT.mono,
+            marginBottom: 4,
+            color: C.textSecondary,
+          }}
+        >
+          <span
+            style={{
+              width: 6,
+              height: 6,
+              borderRadius: "50%",
+              flexShrink: 0,
+              background:
+                s.action === "search"
+                  ? C.burgundy
+                  : s.is_sufficient
+                    ? C.green
+                    : C.amber,
+            }}
+          />
+          <span style={{ color: C.textMuted, minWidth: 20 }}>R{s.round}</span>
+          {s.action === "search" ? (
+            <span>
+              {s.query?.slice(0, 55)}
+              {s.query?.length > 55 ? "…" : ""}{" "}
+              <span style={{ color: C.textMuted }}>
+                → {s.new_chunks_added} new
+              </span>
+            </span>
+          ) : (
+            <span style={{ color: s.is_sufficient ? C.green : C.amber }}>
+              confidence {s.confidence} {s.is_sufficient ? "✓" : "✗"}
+            </span>
+          )}
+        </div>
+      ))}
+      {metadata.routing_plan && (
+        <div
+          style={{
+            fontSize: 11,
+            color: C.textMuted,
+            fontFamily: FONT.body,
+            marginTop: 8,
+          }}
+        >
+          Router: {metadata.routing_plan.category} ·{" "}
+          {metadata.routing_plan.complexity}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Follow-ups ──
+function FollowUps({ question, result, onSelect }) {
+  const [sug, setSug] = useState([]);
+  useEffect(() => {
+    if (!result?.answer) return;
+    const q = question.toLowerCase();
+    let f = [];
+    if (q.includes("fall") || q.includes("steadi"))
+      f = [
+        "What exercises reduce fall risk?",
+        "How should medications be reviewed for fall prevention?",
+        "What home modifications prevent falls?",
+      ];
+    else if (q.includes("dementia") || q.includes("alzheimer"))
+      f = [
+        "What caregiver resources are available?",
+        "How does dementia affect fall risk?",
+        "What are non-drug interventions for dementia?",
+      ];
+    else if (q.includes("medication") || q.includes("medicine"))
+      f = [
+        "What is polypharmacy and why is it risky?",
+        "What does the Beers Criteria recommend?",
+        "How should medication reviews be conducted?",
+      ];
+    else if (q.includes("exercise") || q.includes("physical"))
+      f = [
+        "What balance exercises are recommended?",
+        "How does exercise reduce fall risk?",
+        "WHO guidelines on physical activity for older adults?",
+      ];
+    else if (q.includes("depression") || q.includes("mental"))
+      f = [
+        "How does depression affect fall risk?",
+        "Signs of isolation in older adults?",
+        "Treatments for depression in older adults?",
+      ];
+    else if (q.includes("who") || q.includes("policy") || q.includes("ageing"))
+      f = [
+        "What is integrated care for older people?",
+        "What are age-friendly environments?",
+        "Role of ageism in health outcomes?",
+      ];
+    else
+      f = [
+        "What are fall risk factors for older adults?",
+        "What does CDC STEADI recommend?",
+        "How can caregivers support healthy aging?",
+      ];
+    setSug(f.slice(0, 3));
+  }, [question, result]);
+
+  if (!sug.length || !result) return null;
+  return (
+    <div style={{ marginTop: 20 }}>
+      <div
+        style={{
+          fontSize: 10,
+          fontWeight: 600,
+          color: C.textMuted,
+          textTransform: "uppercase",
+          letterSpacing: "0.1em",
+          marginBottom: 8,
+          fontFamily: FONT.body,
+        }}
+      >
+        Follow-up
+      </div>
+      <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+        {sug.map((s, i) => (
+          <button
+            key={i}
+            onClick={() => onSelect(s)}
+            style={{
+              padding: "5px 12px",
+              borderRadius: 4,
+              border: `1px solid ${C.border}`,
+              background: C.white,
+              color: C.textSecondary,
+              fontSize: 12,
+              cursor: "pointer",
+              fontFamily: FONT.body,
+              transition: "all 0.15s",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = C.burgundy;
+              e.currentTarget.style.color = C.burgundy;
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = C.border;
+              e.currentTarget.style.color = C.textSecondary;
+            }}
+          >
+            {s}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ── Answer block ──
+function Answer({ result, mode, onRetry }) {
+  if (!result) return null;
+  const isAgent = mode === "agent";
+  return (
+    <div style={{ animation: "fadeUp 0.3s ease-out", marginTop: 28 }}>
+      <style>{`@keyframes fadeUp { from { opacity:0; transform:translateY(8px) } to { opacity:1; transform:translateY(0) } }`}</style>
+
+      {/* Metrics */}
+      <div
+        style={{
+          display: "flex",
+          gap: 20,
+          marginBottom: 20,
+          padding: "12px 0",
+          borderBottom: `1px solid ${C.border}`,
+        }}
+      >
+        <Stat
+          label="Latency"
+          value={`${(result.latency_ms / 1000).toFixed(1)}s`}
+          accent={result.latency_ms < 10000 ? C.green : C.amber}
+        />
+        <Stat label="Chunks" value={result.chunks_used} accent={C.burgundy} />
+        <Stat label="Tokens" value={result.tokens_used?.toLocaleString()} />
+        {isAgent && result.sufficiency_confidence != null && (
+          <Stat
+            label="Confidence"
+            value={`${Math.round(result.sufficiency_confidence * 100)}%`}
+            accent={result.sufficiency_confidence >= 0.7 ? C.green : C.amber}
+          />
+        )}
+      </div>
+
+      {/* Response */}
+      <div>
         <div
           style={{
             display: "flex",
             alignItems: "center",
-            gap: 10,
-            marginBottom: 16,
+            gap: 8,
+            marginBottom: 14,
           }}
         >
           <div
             style={{
-              width: 28,
-              height: 28,
-              borderRadius: "50%",
-              background: `linear-gradient(135deg, ${COLORS.accent}, #8b5cf6)`,
+              width: 24,
+              height: 24,
+              borderRadius: 4,
+              background: C.burgundy,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              fontSize: 12,
+              fontSize: 11,
               fontWeight: 700,
-              color: "#fff",
+              color: C.white,
             }}
           >
             G
@@ -384,8 +676,8 @@ function AnswerBlock({ result, mode, onRegenerate }) {
             style={{
               fontSize: 13,
               fontWeight: 600,
-              color: COLORS.text,
-              fontFamily: "'DM Sans', sans-serif",
+              color: C.text,
+              fontFamily: FONT.body,
             }}
           >
             GeriAssist{isAgent ? " Agent" : ""}
@@ -393,192 +685,207 @@ function AnswerBlock({ result, mode, onRegenerate }) {
           {isAgent && (
             <span
               style={{
-                fontSize: 10,
-                padding: "2px 8px",
-                borderRadius: 20,
-                background: "rgba(139, 92, 246, 0.15)",
-                color: "#a78bfa",
+                fontSize: 9,
+                padding: "2px 6px",
+                borderRadius: 3,
+                border: `1px solid ${C.burgundyBorder}`,
+                color: C.burgundy,
                 fontWeight: 600,
-                fontFamily: "'DM Sans', sans-serif",
+                fontFamily: FONT.mono,
+                textTransform: "uppercase",
+                letterSpacing: "0.05em",
               }}
             >
-              AGENTIC
+              Agentic
             </span>
           )}
         </div>
+
         <div
           style={{
             fontSize: 14,
-            lineHeight: 1.8,
-            color: COLORS.text,
-            fontFamily: "'DM Sans', sans-serif",
+            lineHeight: 1.85,
+            color: C.textSecondary,
+            fontFamily: FONT.body,
           }}
         >
-          {renderMarkdown(result.answer)}
+          <Md text={result.answer} />
         </div>
+
         {/* Copy + Retry */}
-        <div style={{ display: "flex", gap: 2, marginTop: 16, paddingTop: 12, borderTop: `1px solid ${COLORS.border}` }}>
-          <IconButton
+        <div
+          style={{
+            display: "flex",
+            gap: 2,
+            marginTop: 14,
+            paddingTop: 10,
+            borderTop: `1px solid ${C.border}`,
+          }}
+        >
+          <IconBtn
             label="Copy"
-            isCopy={true}
-            icon={<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>}
-            onClick={() => navigator.clipboard.writeText(result.answer.replace(/\*\*/g, ""))}
+            isCopy
+            icon={
+              <svg
+                width="15"
+                height="15"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <rect x="9" y="9" width="13" height="13" rx="2" />
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+              </svg>
+            }
+            onClick={() =>
+              navigator.clipboard.writeText(result.answer.replace(/\*\*/g, ""))
+            }
           />
-          <IconButton
+          <IconBtn
             label="Retry"
-            icon={<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>}
-            onClick={onRegenerate}
+            icon={
+              <svg
+                width="15"
+                height="15"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polyline points="23 4 23 10 17 10" />
+                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+              </svg>
+            }
+            onClick={onRetry}
           />
         </div>
       </div>
-      <CitationsPanel citations={result.citations} />
+
+      <Sources citations={result.citations} />
       {isAgent && result.agent_metadata && (
-        <AgentTrace metadata={result.agent_metadata} />
+        <Trace metadata={result.agent_metadata} />
       )}
     </div>
   );
 }
 
-// ── Stats panel ──
-function StatsPanel({ stats }) {
-  if (!stats) return null;
-  const items = [
-    { label: "Documents", value: stats.documents, icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> },
-    { label: "Chunks", value: stats.chunks?.toLocaleString(), icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg> },
-    { label: "Vectors", value: stats.vectors?.toLocaleString(), icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> },
-    { label: "Queries", value: stats.queries_logged, icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> },
-  ];
-  return (
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
-      {items.map(({ label, value, icon }) => (
-        <div key={label} style={{ background: COLORS.surface, borderRadius: 8, border: `1px solid ${COLORS.border}`, padding: "12px 14px", display: "flex", alignItems: "center", gap: 10 }}>
-          <span style={{ color: COLORS.textDim }}>{icon}</span>
-          <div>
-            <div style={{ fontSize: 16, fontWeight: 700, color: COLORS.text, fontFamily: "'JetBrains Mono', monospace" }}>{value}</div>
-            <div style={{ fontSize: 10, color: COLORS.textDim, textTransform: "uppercase", letterSpacing: "0.05em", fontFamily: "'DM Sans', sans-serif" }}>{label}</div>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-const EXAMPLE_QUESTIONS = [
+// ── Example questions ──
+const EXAMPLES = [
   "What are the main risk factors for falls in elderly patients?",
   "How should caregivers manage behavioral symptoms in dementia?",
   "What medications should be avoided in older adults?",
   "What is the WHO Decade of Healthy Ageing?",
-  "How can chronic pain be managed in older adults?",
-  "What exercise recommendations exist for adults over 65?",
 ];
 
+// ── Main ──
 export default function GeriAssist() {
-  const [question, setQuestion] = useState("");
+  const [q, setQ] = useState("");
   const [mode, setMode] = useState("agent");
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState({ agent: null, standard: null });
   const [stats, setStats] = useState(null);
   const [error, setError] = useState(null);
   const [history, setHistory] = useState([]);
-  const inputRef = useRef(null);
+  const ref = useRef(null);
 
   const API = "http://localhost:8000";
-  const currentResult = results[mode];
+  const current = results[mode];
 
   useEffect(() => {
-    fetch(`${API}/stats`).then(r => r.json()).then(setStats).catch(() => {});
-    inputRef.current?.focus();
+    fetch(`${API}/stats`)
+      .then((r) => r.json())
+      .then(setStats)
+      .catch(() => {});
+    ref.current?.focus();
   }, []);
 
-  const handleSubmit = async (overrideQuestion) => {
-    const q = (overrideQuestion || question).trim();
-    if (!q || loading) return;
-    if (overrideQuestion) setQuestion(overrideQuestion);
+  const submit = async (override) => {
+    const text = (override || q).trim();
+    if (!text || loading) return;
+    if (override) setQ(override);
     setLoading(true);
     setError(null);
-
-    const endpoint = mode === "agent" ? "/query/agent" : "/query";
+    const ep = mode === "agent" ? "/query/agent" : "/query";
     try {
-      const res = await fetch(`${API}${endpoint}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ question: q, top_k: 5 }) });
-      if (!res.ok) { const err = await res.json(); throw new Error(err.detail || "Query failed"); }
+      const res = await fetch(`${API}${ep}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question: text, top_k: 5 }),
+      });
+      if (!res.ok) {
+        const e = await res.json();
+        throw new Error(e.detail || "Failed");
+      }
       const data = await res.json();
-      setResults(prev => ({ ...prev, [mode]: data }));
-      setHistory(prev => [{ question: q, mode, timestamp: new Date() }, ...prev.slice(0, 9)]);
-      fetch(`${API}/stats`).then(r => r.json()).then(setStats).catch(() => {});
-    } catch (e) { setError(e.message); } finally { setLoading(false); }
-  };
-
-  const handleFollowUp = (followUpQuestion) => {
-    setQuestion(followUpQuestion);
-    setTimeout(() => handleSubmit(followUpQuestion), 100);
+      setResults((p) => ({ ...p, [mode]: data }));
+      setHistory((p) => [
+        { question: text, mode, ts: new Date() },
+        ...p.slice(0, 9),
+      ]);
+      fetch(`${API}/stats`)
+        .then((r) => r.json())
+        .then(setStats)
+        .catch(() => {});
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div
-      style={{ minHeight: "100vh", background: COLORS.bg, color: COLORS.text }}
-    >
+    <div style={{ minHeight: "100vh", background: C.bg, color: C.text }}>
       <link
-        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Playfair+Display:wght@700;800&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
         rel="stylesheet"
       />
-      <div
-        style={{
-          position: "fixed",
-          inset: 0,
-          opacity: 0.03,
-          backgroundImage:
-            "radial-gradient(circle at 1px 1px, white 1px, transparent 0)",
-          backgroundSize: "40px 40px",
-          pointerEvents: "none",
-        }}
-      />
 
-      <div
-        style={{
-          maxWidth: 900,
-          margin: "0 auto",
-          padding: "0 24px",
-          position: "relative",
-        }}
-      >
+      <div style={{ maxWidth: 740, margin: "0 auto", padding: "0 24px" }}>
+        {/* Header */}
         <header
-          style={{ paddingTop: 48, paddingBottom: 40, textAlign: "center" }}
+          style={{
+            paddingTop: 56,
+            paddingBottom: 32,
+            borderBottom: `1px solid ${C.border}`,
+          }}
         >
           <div
             style={{
-              display: "inline-flex",
+              display: "flex",
               alignItems: "center",
               gap: 12,
-              marginBottom: 16,
+              marginBottom: 8,
             }}
           >
             <div
               style={{
-                width: 44,
-                height: 44,
-                borderRadius: 12,
+                width: 32,
+                height: 32,
+                borderRadius: 4,
+                background: C.burgundy,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                background: `linear-gradient(135deg, ${COLORS.accent}, #8b5cf6)`,
-                boxShadow: `0 0 30px ${COLORS.accentGlow}`,
-                fontSize: 20,
-                fontWeight: 800,
-                color: "#fff",
+                fontSize: 16,
+                fontWeight: 700,
+                color: C.white,
               }}
             >
               G
             </div>
             <h1
               style={{
-                fontSize: 32,
-                fontWeight: 800,
+                fontSize: 28,
+                fontWeight: 600,
                 margin: 0,
-                fontFamily: "'Playfair Display', serif",
-                letterSpacing: "-0.02em",
-                background: `linear-gradient(135deg, ${COLORS.text}, ${COLORS.accent})`,
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
+                fontFamily: FONT.display,
+                color: C.text,
+                letterSpacing: "-0.01em",
               }}
             >
               GeriAssist
@@ -586,282 +893,313 @@ export default function GeriAssist() {
           </div>
           <p
             style={{
-              fontSize: 14,
-              color: COLORS.textMuted,
+              fontSize: 13,
+              color: C.textMuted,
               margin: 0,
-              fontFamily: "'DM Sans', sans-serif",
-              maxWidth: 500,
-              marginInline: "auto",
-              lineHeight: 1.6,
+              fontFamily: FONT.body,
+              lineHeight: 1.5,
             }}
           >
-            Geriatric Clinical Knowledge System | Retrieval-Augmented Generation
+            Geriatric Clinical Knowledge System · Retrieval-Augmented Generation
             with Agentic Search
           </p>
         </header>
 
-        {stats && <StatsPanel stats={stats} />}
-
-        <div
-          style={{
-            marginTop: 24,
-            background: COLORS.surface,
-            borderRadius: 16,
-            border: `1px solid ${COLORS.border}`,
-            padding: 20,
-          }}
-        >
+        {/* Stats bar */}
+        {stats && (
           <div
             style={{
               display: "flex",
-              gap: 4,
-              marginBottom: 14,
-              background: COLORS.bg,
-              borderRadius: 8,
-              padding: 3,
-              width: "fit-content",
+              gap: 24,
+              padding: "16px 0",
+              borderBottom: `1px solid ${C.border}`,
             }}
           >
             {[
-              { key: "agent", label: "Agent RAG" },
-              { key: "standard", label: "Standard RAG" },
-            ].map(({ key, label }) => (
+              { l: "Documents", v: stats.documents },
+              { l: "Chunks", v: stats.chunks?.toLocaleString() },
+              { l: "Vectors", v: stats.vectors?.toLocaleString() },
+              { l: "Queries", v: stats.queries_logged },
+            ].map(({ l, v }) => (
+              <div key={l}>
+                <span
+                  style={{
+                    fontSize: 15,
+                    fontWeight: 600,
+                    fontFamily: FONT.mono,
+                    color: C.text,
+                  }}
+                >
+                  {v}
+                </span>
+                <span
+                  style={{
+                    fontSize: 10,
+                    color: C.textMuted,
+                    marginLeft: 6,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.05em",
+                    fontFamily: FONT.body,
+                  }}
+                >
+                  {l}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Input section */}
+        <div style={{ paddingTop: 28 }}>
+          {/* Mode toggle */}
+          <div style={{ display: "flex", gap: 0, marginBottom: 16 }}>
+            {["agent", "standard"].map((key) => (
               <button
                 key={key}
                 onClick={() => setMode(key)}
                 style={{
                   padding: "6px 16px",
-                  borderRadius: 6,
-                  border: "none",
+                  border: `1px solid ${C.border}`,
                   cursor: "pointer",
                   fontSize: 12,
-                  fontWeight: 600,
-                  fontFamily: "'DM Sans', sans-serif",
-                  transition: "all 0.2s",
-                  background: mode === key ? COLORS.accent : "transparent",
-                  color: mode === key ? "#fff" : COLORS.textMuted,
+                  fontWeight: 500,
+                  fontFamily: FONT.body,
+                  transition: "all 0.15s",
+                  borderRadius: key === "agent" ? "4px 0 0 4px" : "0 4px 4px 0",
+                  marginLeft: key === "standard" ? -1 : 0,
+                  background: mode === key ? C.burgundy : C.white,
+                  color: mode === key ? C.white : C.textSecondary,
+                  borderColor: mode === key ? C.burgundy : C.border,
+                  zIndex: mode === key ? 1 : 0,
+                  position: "relative",
                 }}
               >
-                {label}
+                {key === "agent" ? "Agent RAG" : "Standard RAG"}
               </button>
             ))}
           </div>
+
+          {/* Input */}
           <div style={{ display: "flex", gap: 10 }}>
             <textarea
-              ref={inputRef}
-              value={question}
-              onChange={(e) => setQuestion(e.target.value)}
+              ref={ref}
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();
-                  handleSubmit();
+                  submit();
                 }
               }}
-              placeholder="Ask a geriatric clinical question..."
+              placeholder="Ask a geriatric clinical question…"
               rows={2}
               style={{
                 flex: 1,
-                background: COLORS.bg,
-                border: `1px solid ${COLORS.border}`,
-                borderRadius: 10,
-                padding: "12px 16px",
-                color: COLORS.text,
+                background: C.white,
+                border: `1px solid ${C.border}`,
+                borderRadius: 4,
+                padding: "10px 14px",
+                color: C.text,
                 fontSize: 14,
-                fontFamily: "'DM Sans', sans-serif",
+                fontFamily: FONT.body,
                 resize: "none",
                 outline: "none",
                 lineHeight: 1.6,
                 transition: "border-color 0.2s",
               }}
-              onFocus={(e) => (e.target.style.borderColor = COLORS.accent)}
-              onBlur={(e) => (e.target.style.borderColor = COLORS.border)}
+              onFocus={(e) => (e.target.style.borderColor = C.burgundy)}
+              onBlur={(e) => (e.target.style.borderColor = C.border)}
             />
             <button
-              onClick={() => handleSubmit()}
-              disabled={loading || !question.trim()}
+              onClick={() => submit()}
+              disabled={loading || !q.trim()}
               style={{
-                padding: "0 24px",
-                borderRadius: 10,
-                border: "none",
+                padding: "0 20px",
+                borderRadius: 4,
+                border: `1px solid ${C.burgundy}`,
                 cursor: loading ? "wait" : "pointer",
-                background: loading
-                  ? COLORS.textDim
-                  : `linear-gradient(135deg, ${COLORS.accent}, #8b5cf6)`,
-                color: "#fff",
-                fontSize: 14,
+                background: C.burgundy,
+                color: C.white,
+                fontSize: 13,
                 fontWeight: 600,
-                fontFamily: "'DM Sans', sans-serif",
-                boxShadow: loading ? "none" : `0 4px 20px ${COLORS.accentGlow}`,
-                transition: "all 0.2s",
-                opacity: !question.trim() ? 0.5 : 1,
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
+                fontFamily: FONT.body,
+                transition: "all 0.15s",
+                opacity: !q.trim() ? 0.4 : 1,
                 whiteSpace: "nowrap",
               }}
+              onMouseEnter={(e) => {
+                if (!loading)
+                  e.currentTarget.style.background = C.burgundyLight;
+              }}
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.background = C.burgundy)
+              }
             >
-              {loading ? "Searching..." : "Ask →"}
+              {loading ? "Searching…" : "Ask"}
             </button>
           </div>
+
+          {/* Example questions */}
           <div
-            style={{ display: "flex", gap: 6, flexWrap: "wrap", marginTop: 12 }}
+            style={{ display: "flex", gap: 6, flexWrap: "wrap", marginTop: 10 }}
           >
-            {EXAMPLE_QUESTIONS.slice(0, 4).map((eq, i) => (
+            {EXAMPLES.map((ex, i) => (
               <button
                 key={i}
                 onClick={() => {
-                  setQuestion(eq);
-                  inputRef.current?.focus();
+                  setQ(ex);
+                  ref.current?.focus();
                 }}
                 style={{
-                  padding: "4px 10px",
-                  borderRadius: 6,
-                  border: `1px solid ${COLORS.border}`,
-                  background: "transparent",
-                  color: COLORS.textDim,
+                  padding: "3px 9px",
+                  borderRadius: 3,
+                  border: `1px solid ${C.border}`,
+                  background: C.white,
+                  color: C.textMuted,
                   fontSize: 11,
                   cursor: "pointer",
-                  fontFamily: "'DM Sans', sans-serif",
+                  fontFamily: FONT.body,
                   transition: "all 0.15s",
-                  whiteSpace: "nowrap",
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = COLORS.accent;
-                  e.currentTarget.style.color = COLORS.text;
+                  e.currentTarget.style.borderColor = C.burgundy;
+                  e.currentTarget.style.color = C.burgundy;
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = COLORS.border;
-                  e.currentTarget.style.color = COLORS.textDim;
+                  e.currentTarget.style.borderColor = C.border;
+                  e.currentTarget.style.color = C.textMuted;
                 }}
               >
-                {eq.length > 45 ? eq.slice(0, 45) + "..." : eq}
+                {ex.length > 48 ? ex.slice(0, 48) + "…" : ex}
               </button>
             ))}
           </div>
         </div>
 
+        {/* Error */}
         {error && (
           <div
             style={{
               marginTop: 16,
-              padding: "12px 16px",
-              background: COLORS.redSoft,
-              borderRadius: 10,
-              border: `1px solid rgba(239,68,68,0.2)`,
+              padding: "10px 14px",
+              border: `1px solid ${C.burgundyBorder}`,
+              borderRadius: 4,
               fontSize: 13,
-              color: COLORS.red,
-              fontFamily: "'DM Sans', sans-serif",
+              color: C.red,
+              fontFamily: FONT.body,
+              background: C.burgundySoft,
             }}
           >
             {error}
           </div>
         )}
-        {loading && <TypingIndicator />}
-        <AnswerBlock
-          result={currentResult}
-          mode={mode}
-          onRegenerate={() => handleSubmit()}
-        />
-        <FollowUpSuggestions
-          question={question}
-          result={currentResult}
-          onSelect={handleFollowUp}
+
+        {/* Loading */}
+        {loading && <Typing />}
+
+        {/* Answer */}
+        <Answer result={current} mode={mode} onRetry={() => submit()} />
+
+        {/* Follow-ups */}
+        <FollowUps
+          question={q}
+          result={current}
+          onSelect={(s) => {
+            setQ(s);
+            setTimeout(() => submit(s), 100);
+          }}
         />
 
+        {/* History */}
         {history.length > 0 && !loading && (
           <div
             style={{
-              marginTop: 40,
-              paddingTop: 24,
-              borderTop: `1px solid ${COLORS.border}`,
+              marginTop: 32,
+              paddingTop: 20,
+              borderTop: `1px solid ${C.border}`,
             }}
           >
             <div
               style={{
-                fontSize: 11,
-                fontWeight: 700,
-                color: COLORS.textDim,
+                fontSize: 10,
+                fontWeight: 600,
+                color: C.textMuted,
                 textTransform: "uppercase",
-                letterSpacing: "0.08em",
-                marginBottom: 12,
-                fontFamily: "'DM Sans', sans-serif",
+                letterSpacing: "0.1em",
+                marginBottom: 8,
+                fontFamily: FONT.body,
               }}
             >
-              Recent Queries
+              Recent
             </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-              {history.map((h, i) => (
-                <button
-                  key={i}
-                  onClick={() => {
-                    setQuestion(h.question);
-                    setMode(h.mode);
-                  }}
+            {history.map((h, i) => (
+              <button
+                key={i}
+                onClick={() => {
+                  setQ(h.question);
+                  setMode(h.mode);
+                }}
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  width: "100%",
+                  background: "transparent",
+                  border: "none",
+                  padding: "6px 0",
+                  cursor: "pointer",
+                  transition: "all 0.1s",
+                  borderBottom: `1px solid ${C.border}`,
+                }}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.background = C.surfaceAlt)
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.background = "transparent")
+                }
+              >
+                <span
                   style={{
-                    background: "transparent",
-                    border: "1px solid transparent",
-                    borderRadius: 8,
-                    padding: "8px 12px",
+                    fontSize: 12,
+                    color: C.textSecondary,
+                    fontFamily: FONT.body,
                     textAlign: "left",
-                    cursor: "pointer",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    transition: "all 0.15s",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = COLORS.surfaceHover;
-                    e.currentTarget.style.borderColor = COLORS.border;
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = "transparent";
-                    e.currentTarget.style.borderColor = "transparent";
                   }}
                 >
-                  <span
-                    style={{
-                      fontSize: 13,
-                      color: COLORS.textMuted,
-                      fontFamily: "'DM Sans', sans-serif",
-                    }}
-                  >
-                    {h.question.slice(0, 70)}
-                    {h.question.length > 70 ? "..." : ""}
-                  </span>
-                  <span
-                    style={{
-                      fontSize: 10,
-                      color: COLORS.textDim,
-                      padding: "2px 6px",
-                      borderRadius: 4,
-                      background:
-                        h.mode === "agent"
-                          ? "rgba(139,92,246,0.1)"
-                          : COLORS.accentSoft,
-                      fontFamily: "'JetBrains Mono', monospace",
-                    }}
-                  >
-                    {h.mode}
-                  </span>
-                </button>
-              ))}
-            </div>
+                  {h.question.slice(0, 65)}
+                  {h.question.length > 65 ? "…" : ""}
+                </span>
+                <span
+                  style={{
+                    fontSize: 9,
+                    color: C.textMuted,
+                    fontFamily: FONT.mono,
+                    textTransform: "uppercase",
+                    flexShrink: 0,
+                    marginLeft: 12,
+                  }}
+                >
+                  {h.mode}
+                </span>
+              </button>
+            ))}
           </div>
         )}
 
+        {/* Footer */}
         <footer
           style={{
             textAlign: "center",
-            padding: "48px 0 32px",
+            padding: "40px 0 28px",
             fontSize: 11,
-            color: COLORS.textDim,
-            fontFamily: "'DM Sans', sans-serif",
+            color: C.textLight,
+            fontFamily: FONT.body,
           }}
         >
           GeriAssist v0.1.0 ·{" "}
           {stats
             ? `${stats.documents} documents · ${stats.vectors?.toLocaleString()} vectors`
-            : "Loading..."}{" "}
+            : "…"}{" "}
           · FastAPI + FAISS + OpenAI · Built by Mama Thomas
         </footer>
       </div>
