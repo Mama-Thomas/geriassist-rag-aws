@@ -207,6 +207,73 @@ async def upload_to_s3(
 async def ingest_from_s3_endpoint(category: str = None, db: Session = Depends(get_db)):
     return ingest_from_s3(vector_store=vector_store, db=db, category=category)
 
+@app.post("/s3/ingest-file")
+async def ingest_single_file_endpoint(
+    s3_key: str,
+    title: str,
+    source: str = "PMC",
+    category: str = "pmc",
+    source_url_override: str = None,
+    db: Session = Depends(get_db),
+):
+    """
+    Ingest a single file from S3 by key.
+    source_url_override: if provided, stores this URL in the document record
+    instead of the s3_key (used for PMC articles so 'View Source' links to
+    the real PMC article page, not the S3 path).
+    """
+    from app.aws.s3 import download_document, backup_faiss_index
+    from app.db.models import Document
+
+    download_dir = "data/s3_downloads"
+    os.makedirs(download_dir, exist_ok=True)
+
+    try:
+        local_path = download_document(s3_key, local_dir=download_dir)
+        result = ingest_document(
+            file_path=local_path,
+            title=title,
+            source=source,
+            category=category,
+            db=db,
+        )
+
+        # If a source URL override is provided, update the document record
+        if source_url_override:
+            doc_record = db.query(Document).filter(
+                Document.id == result["document_id"]
+            ).first()
+            if doc_record:
+                doc_record.s3_path = source_url_override
+                db.commit()
+        else:
+            doc_record = db.query(Document).filter(
+                Document.id == result["document_id"]
+            ).first()
+            if doc_record:
+                doc_record.s3_path = s3_key
+                db.commit()
+
+        vector_store.add_embeddings(
+            embeddings=result["embeddings"],
+            chunk_ids=result["chunk_ids"],
+        )
+
+        if os.path.exists(local_path):
+            os.remove(local_path)
+
+        return {
+            "message": "File ingested successfully",
+            "document_id": result["document_id"],
+            "title": title,
+            "chunks_created": result["chunks_created"],
+            "total_vectors": vector_store.total_vectors,
+            "source_url": source_url_override or s3_key,
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 @app.post("/s3/backup-index")
 async def backup_index_endpoint():

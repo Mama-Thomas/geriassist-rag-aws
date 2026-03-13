@@ -10,6 +10,8 @@ pydantic==2.9.0
 PyPDF2==3.0.1
 tiktoken==0.7.0
 numpy==1.26.4
-requests==2.32.3
 python-multipart==0.0.9
 packaging==26.0
+beautifulsoup4==4.14.3
+requests==2.32.5
+lxml==6.0.2
