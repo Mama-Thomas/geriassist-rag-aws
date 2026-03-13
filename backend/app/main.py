@@ -1,7 +1,7 @@
 import os
 import shutil
 import json
-from fastapi import FastAPI, Depends, UploadFile, File, Form, HTTPException
+from fastapi import FastAPI, Depends, UploadFile, File, Form, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
@@ -209,11 +209,11 @@ async def ingest_from_s3_endpoint(category: str = None, db: Session = Depends(ge
 
 @app.post("/s3/ingest-file")
 async def ingest_single_file_endpoint(
-    s3_key: str,
-    title: str,
-    source: str = "PMC",
-    category: str = "pmc",
-    source_url_override: str = None,
+    s3_key: str = Query(...),
+    title: str = Query(...),
+    source: str = Query("PMC"),
+    category: str = Query("pmc"),
+    source_url_override: str = Query(None),
     db: Session = Depends(get_db),
 ):
     """

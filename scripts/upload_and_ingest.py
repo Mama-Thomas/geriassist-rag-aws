@@ -121,12 +121,17 @@ def trigger_ingestion():
             for filename in files:
                 original_url = url_map.get(filename)
                 try:
-                    params = {"category": category}
-                    # If we have the original URL for this file, pass it
-                    # so RAG metadata stores the PMC article page, not S3
+                    s3_key = f"documents/{category}/{filename}"
+                    title = filename.replace(".txt", "").replace("_", " ").replace("-", " ").title()
+                    
+                    params = {
+                        "s3_key": s3_key,
+                        "title": title,
+                        "source": "PMC",
+                        "category": category,
+                    }
                     if original_url and filename.endswith(".txt"):
                         params["source_url_override"] = original_url
-                        params["filename"] = filename
 
                     response = requests.post(
                         f"{API_BASE}/s3/ingest-file",
@@ -134,10 +139,10 @@ def trigger_ingestion():
                         timeout=120
                     )
                     result = response.json()
-                    if result.get("chunks"):
+                    if result.get("chunks_created"):      # ← fixed from "chunks"
                         ingested += 1
-                    if result.get("error"):
-                        errors.append({"file": filename, "error": result["error"]})
+                    if result.get("detail"):              # FastAPI errors use "detail"
+                        errors.append({"file": filename, "error": result["detail"]})
                 except Exception as e:
                     errors.append({"file": filename, "error": str(e)})
 

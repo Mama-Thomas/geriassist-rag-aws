@@ -41,6 +41,14 @@ def ingest_from_s3(
         print(f"\n[{i}/{len(new_docs)}] Ingesting: {filename}")
         try:
             local_path = download_document(s3_key, local_dir=download_dir)
+            
+            # Skip files that are too large to embed
+            file_size_mb = os.path.getsize(local_path) / (1024 * 1024)
+            if file_size_mb > 5:
+                print(f"   Skipped (too large: {file_size_mb:.1f} MB)")
+                os.remove(local_path)
+                continue
+            
             result = ingest_document(
                 file_path=local_path, title=title,
                 source=doc_category.upper(), category=doc_category,
