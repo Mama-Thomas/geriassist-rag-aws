@@ -512,58 +512,63 @@ function Trace({ metadata }) {
 }
 
 // ── Follow-ups ──
-function FollowUps({ question, result, onSelect }) {
+function FollowUps({ question, result, onSelect, apiBase }) {
   const [sug, setSug] = useState([]);
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
-    if (!result?.answer) return;
-    const q = question.toLowerCase();
-    let f = [];
-    if (q.includes("fall") || q.includes("steadi"))
-      f = [
-        "What exercises reduce fall risk?",
-        "How should medications be reviewed for fall prevention?",
-        "What home modifications prevent falls?",
-      ];
-    else if (q.includes("dementia") || q.includes("alzheimer"))
-      f = [
-        "What caregiver resources are available?",
-        "How does dementia affect fall risk?",
-        "What are non-drug interventions for dementia?",
-      ];
-    else if (q.includes("medication") || q.includes("medicine"))
-      f = [
-        "What is polypharmacy and why is it risky?",
-        "What does the Beers Criteria recommend?",
-        "How should medication reviews be conducted?",
-      ];
-    else if (q.includes("exercise") || q.includes("physical"))
-      f = [
-        "What balance exercises are recommended?",
-        "How does exercise reduce fall risk?",
-        "WHO guidelines on physical activity for older adults?",
-      ];
-    else if (q.includes("depression") || q.includes("mental"))
-      f = [
-        "How does depression affect fall risk?",
-        "Signs of isolation in older adults?",
-        "Treatments for depression in older adults?",
-      ];
-    else if (q.includes("who") || q.includes("policy") || q.includes("ageing"))
-      f = [
-        "What is integrated care for older people?",
-        "What are age-friendly environments?",
-        "Role of ageism in health outcomes?",
-      ];
-    else
-      f = [
-        "What are fall risk factors for older adults?",
-        "What does CDC STEADI recommend?",
-        "How can caregivers support healthy aging?",
-      ];
-    setSug(f.slice(0, 3));
+    if (!result?.answer || !question) return;
+    setSug([]);
+    setLoading(true);
+    fetch(`${apiBase}/followups`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ question, answer: result.answer }),
+    })
+      .then((r) => r.json())
+      .then((data) => setSug(data.suggestions || []))
+      .catch(() => setSug([]))
+      .finally(() => setLoading(false));
   }, [question, result]);
 
-  if (!sug.length || !result) return null;
+  if (!result) return null;
+
+  if (loading) return (
+    <div style={{ marginTop: 20 }}>
+      <div
+        style={{
+          fontSize: 10,
+          fontWeight: 600,
+          color: C.textMuted,
+          textTransform: "uppercase",
+          letterSpacing: "0.1em",
+          marginBottom: 8,
+          fontFamily: FONT.body,
+        }}
+      >
+        Follow-up
+      </div>
+      <div style={{ display: "flex", gap: 6 }}>
+        {[120, 160, 140].map((w, i) => (
+          <div
+            key={i}
+            style={{
+              height: 28,
+              width: w,
+              borderRadius: 4,
+              background: C.surfaceAlt,
+              animation: "pulse 1.5s ease-in-out infinite",
+              animationDelay: `${i * 0.15}s`,
+            }}
+          />
+        ))}
+        <style>{`@keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:0.8} }`}</style>
+      </div>
+    </div>
+  );
+
+  if (!sug.length) return null;
+
   return (
     <div style={{ marginTop: 20 }}>
       <div
