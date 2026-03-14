@@ -512,63 +512,58 @@ function Trace({ metadata }) {
 }
 
 // ── Follow-ups ──
-function FollowUps({ question, result, onSelect, apiBase }) {
+function FollowUps({ question, result, onSelect }) {
   const [sug, setSug] = useState([]);
-  const [loading, setLoading] = useState(false);
-
   useEffect(() => {
-    if (!result?.answer || !question) return;
-    setSug([]);
-    setLoading(true);
-    fetch(`${apiBase}/followups`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ question, answer: result.answer }),
-    })
-      .then((r) => r.json())
-      .then((data) => setSug(data.suggestions || []))
-      .catch(() => setSug([]))
-      .finally(() => setLoading(false));
+    if (!result?.answer) return;
+    const q = question.toLowerCase();
+    let f = [];
+    if (q.includes("fall") || q.includes("steadi"))
+      f = [
+        "What exercises reduce fall risk?",
+        "How should medications be reviewed for fall prevention?",
+        "What home modifications prevent falls?",
+      ];
+    else if (q.includes("dementia") || q.includes("alzheimer"))
+      f = [
+        "What caregiver resources are available?",
+        "How does dementia affect fall risk?",
+        "What are non-drug interventions for dementia?",
+      ];
+    else if (q.includes("medication") || q.includes("medicine"))
+      f = [
+        "What is polypharmacy and why is it risky?",
+        "What does the Beers Criteria recommend?",
+        "How should medication reviews be conducted?",
+      ];
+    else if (q.includes("exercise") || q.includes("physical"))
+      f = [
+        "What balance exercises are recommended?",
+        "How does exercise reduce fall risk?",
+        "WHO guidelines on physical activity for older adults?",
+      ];
+    else if (q.includes("depression") || q.includes("mental"))
+      f = [
+        "How does depression affect fall risk?",
+        "Signs of isolation in older adults?",
+        "Treatments for depression in older adults?",
+      ];
+    else if (q.includes("who") || q.includes("policy") || q.includes("ageing"))
+      f = [
+        "What is integrated care for older people?",
+        "What are age-friendly environments?",
+        "Role of ageism in health outcomes?",
+      ];
+    else
+      f = [
+        "What are fall risk factors for older adults?",
+        "What does CDC STEADI recommend?",
+        "How can caregivers support healthy aging?",
+      ];
+    setSug(f.slice(0, 3));
   }, [question, result]);
 
-  if (!result) return null;
-
-  if (loading) return (
-    <div style={{ marginTop: 20 }}>
-      <div
-        style={{
-          fontSize: 10,
-          fontWeight: 600,
-          color: C.textMuted,
-          textTransform: "uppercase",
-          letterSpacing: "0.1em",
-          marginBottom: 8,
-          fontFamily: FONT.body,
-        }}
-      >
-        Follow-up
-      </div>
-      <div style={{ display: "flex", gap: 6 }}>
-        {[120, 160, 140].map((w, i) => (
-          <div
-            key={i}
-            style={{
-              height: 28,
-              width: w,
-              borderRadius: 4,
-              background: C.surfaceAlt,
-              animation: "pulse 1.5s ease-in-out infinite",
-              animationDelay: `${i * 0.15}s`,
-            }}
-          />
-        ))}
-        <style>{`@keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:0.8} }`}</style>
-      </div>
-    </div>
-  );
-
-  if (!sug.length) return null;
-
+  if (!sug.length || !result) return null;
   return (
     <div style={{ marginTop: 20 }}>
       <div
@@ -792,14 +787,12 @@ export default function GeriAssist() {
   const [q, setQ] = useState("");
   const [mode, setMode] = useState("agent");
   const [loading, setLoading] = useState(false);
-  const [results, setResults] = useState({ agent: null, standard: null });
+  const [thread, setThread] = useState([]); // [{id, question, mode, result, error}]
   const [stats, setStats] = useState(null);
-  const [error, setError] = useState(null);
-  const [history, setHistory] = useState([]);
   const ref = useRef(null);
+  const bottomRef = useRef(null);
 
   const API = "http://localhost:8000";
-  const current = results[mode];
 
   useEffect(() => {
     fetch(`${API}/stats`)
@@ -809,13 +802,21 @@ export default function GeriAssist() {
     ref.current?.focus();
   }, []);
 
+  // Scroll to bottom whenever thread updates or loading changes
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [thread, loading]);
+
   const submit = async (override) => {
     const text = (override || q).trim();
     if (!text || loading) return;
-    if (override) setQ(override);
+    setQ("");
     setLoading(true);
-    setError(null);
-    const ep = mode === "agent" ? "/query/agent" : "/query";
+    const entryMode = mode;
+    const id = Date.now();
+    // Add pending entry immediately so user sees their question
+    setThread((p) => [...p, { id, question: text, mode: entryMode, result: null, error: null }]);
+    const ep = entryMode === "agent" ? "/query/agent" : "/query";
     try {
       const res = await fetch(`${API}${ep}`, {
         method: "POST",
@@ -827,21 +828,16 @@ export default function GeriAssist() {
         throw new Error(e.detail || "Failed");
       }
       const data = await res.json();
-      setResults((p) => ({ ...p, [mode]: data }));
-      setHistory((p) => [
-        { question: text, mode, ts: new Date() },
-        ...p.slice(0, 9),
-      ]);
-      fetch(`${API}/stats`)
-        .then((r) => r.json())
-        .then(setStats)
-        .catch(() => {});
+      setThread((p) => p.map((entry) => entry.id === id ? { ...entry, result: data } : entry));
+      fetch(`${API}/stats`).then((r) => r.json()).then(setStats).catch(() => {});
     } catch (e) {
-      setError(e.message);
+      setThread((p) => p.map((entry) => entry.id === id ? { ...entry, error: e.message } : entry));
     } finally {
       setLoading(false);
     }
   };
+
+  const clearThread = () => setThread([]);
 
   return (
     <div style={{ minHeight: "100vh", background: C.bg, color: C.text }}>
@@ -1081,114 +1077,135 @@ export default function GeriAssist() {
           </div>
         </div>
 
-        {/* Error */}
-        {error && (
-          <div
-            style={{
-              marginTop: 16,
-              padding: "10px 14px",
-              border: `1px solid ${C.burgundyBorder}`,
-              borderRadius: 4,
-              fontSize: 13,
-              color: C.red,
-              fontFamily: FONT.body,
-              background: C.burgundySoft,
-            }}
-          >
-            {error}
+        {/* ── Conversation thread ── */}
+        {thread.length > 0 && (
+          <div style={{ marginTop: 32 }}>
+            {thread.map((entry, idx) => {
+              const isLast = idx === thread.length - 1;
+              return (
+                <div
+                  key={entry.id}
+                  style={{
+                    marginBottom: 40,
+                    paddingBottom: 40,
+                    borderBottom: isLast ? "none" : `1px solid ${C.border}`,
+                    animation: "fadeUp 0.3s ease-out",
+                  }}
+                >
+                  {/* User question bubble */}
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      marginBottom: 20,
+                    }}
+                  >
+                    <div
+                      style={{
+                        maxWidth: "80%",
+                        background: C.surfaceAlt,
+                        border: `1px solid ${C.border}`,
+                        borderRadius: "8px 8px 2px 8px",
+                        padding: "10px 14px",
+                        fontSize: 14,
+                        fontFamily: FONT.body,
+                        color: C.text,
+                        lineHeight: 1.5,
+                      }}
+                    >
+                      {entry.question}
+                      <div
+                        style={{
+                          marginTop: 6,
+                          fontSize: 9,
+                          color: C.textLight,
+                          fontFamily: FONT.mono,
+                          textTransform: "uppercase",
+                          letterSpacing: "0.05em",
+                        }}
+                      >
+                        {entry.mode === "agent" ? "Agent RAG" : "Standard RAG"}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Answer or loading */}
+                  {!entry.result && !entry.error && isLast && loading ? (
+                    <Typing />
+                  ) : entry.error ? (
+                    <div
+                      style={{
+                        padding: "10px 14px",
+                        border: `1px solid ${C.burgundyBorder}`,
+                        borderRadius: 4,
+                        fontSize: 13,
+                        color: C.red,
+                        fontFamily: FONT.body,
+                        background: C.burgundySoft,
+                      }}
+                    >
+                      {entry.error}
+                    </div>
+                  ) : entry.result ? (
+                    <>
+                      <Answer
+                        result={entry.result}
+                        mode={entry.mode}
+                        onRetry={() => submit(entry.question)}
+                      />
+                      {isLast && (
+                        <FollowUps
+                          question={entry.question}
+                          result={entry.result}
+                          onSelect={(s) => submit(s)}
+                          apiBase={API}
+                        />
+                      )}
+                    </>
+                  ) : null}
+                </div>
+              );
+            })}
+            <div ref={bottomRef} />
           </div>
         )}
 
-        {/* Loading */}
-        {loading && <Typing />}
-
-        {/* Answer */}
-        <Answer result={current} mode={mode} onRetry={() => submit()} />
-
-        {/* Follow-ups */}
-        <FollowUps
-          question={q}
-          result={current}
-          onSelect={(s) => {
-            setQ(s);
-            setTimeout(() => submit(s), 100);
-          }}
-          apiBase={API}
-        />
-
-        {/* History */}
-        {history.length > 0 && !loading && (
+        {/* Empty state */}
+        {thread.length === 0 && !loading && (
           <div
             style={{
-              marginTop: 32,
-              paddingTop: 20,
-              borderTop: `1px solid ${C.border}`,
+              marginTop: 48,
+              textAlign: "center",
+              color: C.textLight,
+              fontFamily: FONT.body,
+              fontSize: 14,
             }}
           >
-            <div
+            <div style={{ fontSize: 28, marginBottom: 12, opacity: 0.4 }}>◈</div>
+            Ask a geriatric clinical question to begin
+          </div>
+        )}
+
+        {/* Clear thread */}
+        {thread.length > 0 && !loading && (
+          <div style={{ textAlign: "center", marginTop: 8, marginBottom: 16 }}>
+            <button
+              onClick={clearThread}
               style={{
-                fontSize: 10,
-                fontWeight: 600,
-                color: C.textMuted,
-                textTransform: "uppercase",
-                letterSpacing: "0.1em",
-                marginBottom: 8,
+                background: "none",
+                border: "none",
+                fontSize: 11,
+                color: C.textLight,
                 fontFamily: FONT.body,
+                cursor: "pointer",
+                padding: "4px 8px",
+                transition: "color 0.15s",
               }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = C.textMuted)}
+              onMouseLeave={(e) => (e.currentTarget.style.color = C.textLight)}
             >
-              Recent
-            </div>
-            {history.map((h, i) => (
-              <button
-                key={i}
-                onClick={() => {
-                  setQ(h.question);
-                  setMode(h.mode);
-                }}
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  width: "100%",
-                  background: "transparent",
-                  border: "none",
-                  padding: "6px 0",
-                  cursor: "pointer",
-                  transition: "all 0.1s",
-                  borderBottom: `1px solid ${C.border}`,
-                }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.background = C.surfaceAlt)
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.background = "transparent")
-                }
-              >
-                <span
-                  style={{
-                    fontSize: 12,
-                    color: C.textSecondary,
-                    fontFamily: FONT.body,
-                    textAlign: "left",
-                  }}
-                >
-                  {h.question.slice(0, 65)}
-                  {h.question.length > 65 ? "…" : ""}
-                </span>
-                <span
-                  style={{
-                    fontSize: 9,
-                    color: C.textMuted,
-                    fontFamily: FONT.mono,
-                    textTransform: "uppercase",
-                    flexShrink: 0,
-                    marginLeft: 12,
-                  }}
-                >
-                  {h.mode}
-                </span>
-              </button>
-            ))}
+              Clear conversation
+            </button>
           </div>
         )}
 
@@ -1196,7 +1213,7 @@ export default function GeriAssist() {
         <footer
           style={{
             textAlign: "center",
-            padding: "40px 0 28px",
+            padding: "24px 0 28px",
             fontSize: 11,
             color: C.textLight,
             fontFamily: FONT.body,
