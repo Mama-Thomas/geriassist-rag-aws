@@ -1145,20 +1145,22 @@ export default function GeriAssist() {
             </button>
           </div>
 
-          {/* Example chips */}
-          <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginTop: 8 }}>
-            {EXAMPLES.map((ex, i) => (
-              <button
-                key={i}
-                onClick={() => { setQ(ex); ref.current?.focus(); }}
-                style={{ padding: "3px 9px", borderRadius: 3, border: `1px solid ${C.border}`, background: C.white, color: C.textMuted, fontSize: 11, cursor: "pointer", fontFamily: FONT.body, transition: "all 0.15s" }}
-                onMouseEnter={(e) => { e.currentTarget.style.borderColor = C.burgundy; e.currentTarget.style.color = C.burgundy; }}
-                onMouseLeave={(e) => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.color = C.textMuted; }}
-              >
-                {ex.length > 48 ? ex.slice(0, 48) + "…" : ex}
-              </button>
-            ))}
-          </div>
+          {/* Example chips — only before conversation starts */}
+          {thread.length === 0 && (
+            <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginTop: 8 }}>
+              {EXAMPLES.map((ex, i) => (
+                <button
+                  key={i}
+                  onClick={() => { setQ(ex); ref.current?.focus(); }}
+                  style={{ padding: "3px 9px", borderRadius: 3, border: `1px solid ${C.border}`, background: C.white, color: C.textMuted, fontSize: 11, cursor: "pointer", fontFamily: FONT.body, transition: "all 0.15s" }}
+                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = C.burgundy; e.currentTarget.style.color = C.burgundy; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.color = C.textMuted; }}
+                >
+                  {ex.length > 48 ? ex.slice(0, 48) + "…" : ex}
+                </button>
+              ))}
+            </div>
+          )}
 
           {/* Tip text */}
           <p style={{ margin: "8px 0 0", fontSize: 11, color: C.textLight, fontFamily: FONT.body, textAlign: "center" }}>
