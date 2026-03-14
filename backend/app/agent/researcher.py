@@ -294,7 +294,7 @@ def research_query(
             citations.append({
                 "source": source_name,
                 "snippet": c["chunk_text"][:200] + "...",
-                "pdf_url": generate_presigned_url(c["s3_path"]) if c.get("s3_path") else None,
+                "pdf_url": c["s3_path"] if c.get("s3_path", "").startswith("https://") else generate_presigned_url(c["s3_path"]) if c.get("s3_path") else None,
             })
             source_counts[source_name] = count + 1
 

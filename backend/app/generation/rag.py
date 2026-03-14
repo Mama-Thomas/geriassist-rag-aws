@@ -118,7 +118,7 @@ def query_rag(
             "source": item["title"],
             "snippet": item["chunk_text"][:200] + "...",
             "rank": item["rank"],
-            "pdf_url": generate_presigned_url(item["s3_path"]) if item.get("s3_path") else None,
+            "pdf_url": item["s3_path"] if item.get("s3_path", "").startswith("https://") else generate_presigned_url(item["s3_path"]) if item.get("s3_path") else None,
         }
         for item in chunks_with_metadata
     ]
