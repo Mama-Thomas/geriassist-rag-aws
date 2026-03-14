@@ -1,0 +1,596 @@
+{
+  "summary": {
+    "baseline": {
+      "avg_latency_ms": 10867.3,
+      "avg_chunks_used": 5.0,
+      "avg_tokens_used": 3173.8,
+      "avg_answer_length": 358.8,
+      "total_cost_usd": 0.0143
+    },
+    "agent": {
+      "avg_latency_ms": 15339.1,
+      "avg_chunks_used": 6.7,
+      "avg_tokens_used": 5410.9,
+      "avg_answer_length": 371.6,
+      "avg_rounds": 1.0,
+      "avg_confidence": 0.86,
+      "total_cost_usd": 0.0243
+    }
+  },
+  "detailed": {
+    "baseline": [
+      {
+        "id": "q01",
+        "latency_ms": 10579,
+        "chunks_used": 5,
+        "tokens_used": 2981,
+        "answer_length": 312,
+        "citations": 5
+      },
+      {
+        "id": "q02",
+        "latency_ms": 8044,
+        "chunks_used": 5,
+        "tokens_used": 3085,
+        "answer_length": 307,
+        "citations": 5
+      },
+      {
+        "id": "q03",
+        "latency_ms": 7338,
+        "chunks_used": 5,
+        "tokens_used": 3089,
+        "answer_length": 293,
+        "citations": 5
+      },
+      {
+        "id": "q04",
+        "latency_ms": 5648,
+        "chunks_used": 5,
+        "tokens_used": 2957,
+        "answer_length": 191,
+        "citations": 5
+      },
+      {
+        "id": "q05",
+        "latency_ms": 11083,
+        "chunks_used": 5,
+        "tokens_used": 3301,
+        "answer_length": 440,
+        "citations": 5
+      },
+      {
+        "id": "q06",
+        "latency_ms": 7629,
+        "chunks_used": 5,
+        "tokens_used": 3060,
+        "answer_length": 256,
+        "citations": 5
+      },
+      {
+        "id": "q07",
+        "latency_ms": 11587,
+        "chunks_used": 5,
+        "tokens_used": 3280,
+        "answer_length": 403,
+        "citations": 5
+      },
+      {
+        "id": "q08",
+        "latency_ms": 10329,
+        "chunks_used": 5,
+        "tokens_used": 2984,
+        "answer_length": 314,
+        "citations": 5
+      },
+      {
+        "id": "q09",
+        "latency_ms": 11229,
+        "chunks_used": 5,
+        "tokens_used": 3272,
+        "answer_length": 402,
+        "citations": 5
+      },
+      {
+        "id": "q10",
+        "latency_ms": 9708,
+        "chunks_used": 5,
+        "tokens_used": 3194,
+        "answer_length": 354,
+        "citations": 5
+      },
+      {
+        "id": "q11",
+        "latency_ms": 13670,
+        "chunks_used": 5,
+        "tokens_used": 3062,
+        "answer_length": 440,
+        "citations": 5
+      },
+      {
+        "id": "q12",
+        "latency_ms": 11390,
+        "chunks_used": 5,
+        "tokens_used": 3102,
+        "answer_length": 301,
+        "citations": 5
+      },
+      {
+        "id": "q13",
+        "latency_ms": 17363,
+        "chunks_used": 5,
+        "tokens_used": 3204,
+        "answer_length": 367,
+        "citations": 5
+      },
+      {
+        "id": "q14",
+        "latency_ms": 11253,
+        "chunks_used": 5,
+        "tokens_used": 3267,
+        "answer_length": 372,
+        "citations": 5
+      },
+      {
+        "id": "q15",
+        "latency_ms": 10023,
+        "chunks_used": 5,
+        "tokens_used": 3198,
+        "answer_length": 385,
+        "citations": 5
+      },
+      {
+        "id": "q16",
+        "latency_ms": 9910,
+        "chunks_used": 5,
+        "tokens_used": 3158,
+        "answer_length": 340,
+        "citations": 5
+      },
+      {
+        "id": "q17",
+        "latency_ms": 16023,
+        "chunks_used": 5,
+        "tokens_used": 3398,
+        "answer_length": 511,
+        "citations": 5
+      },
+      {
+        "id": "q18",
+        "latency_ms": 12700,
+        "chunks_used": 5,
+        "tokens_used": 3255,
+        "answer_length": 398,
+        "citations": 5
+      },
+      {
+        "id": "q19",
+        "latency_ms": 13797,
+        "chunks_used": 5,
+        "tokens_used": 3257,
+        "answer_length": 394,
+        "citations": 5
+      },
+      {
+        "id": "q20",
+        "latency_ms": 8806,
+        "chunks_used": 5,
+        "tokens_used": 3081,
+        "answer_length": 271,
+        "citations": 5
+      },
+      {
+        "id": "q21",
+        "latency_ms": 12571,
+        "chunks_used": 5,
+        "tokens_used": 3163,
+        "answer_length": 370,
+        "citations": 5
+      },
+      {
+        "id": "q22",
+        "latency_ms": 11545,
+        "chunks_used": 5,
+        "tokens_used": 3223,
+        "answer_length": 369,
+        "citations": 5
+      },
+      {
+        "id": "q23",
+        "latency_ms": 9621,
+        "chunks_used": 5,
+        "tokens_used": 3222,
+        "answer_length": 376,
+        "citations": 5
+      },
+      {
+        "id": "q24",
+        "latency_ms": 9756,
+        "chunks_used": 5,
+        "tokens_used": 3111,
+        "answer_length": 325,
+        "citations": 5
+      },
+      {
+        "id": "q25",
+        "latency_ms": 9286,
+        "chunks_used": 5,
+        "tokens_used": 3167,
+        "answer_length": 322,
+        "citations": 5
+      },
+      {
+        "id": "q26",
+        "latency_ms": 11395,
+        "chunks_used": 5,
+        "tokens_used": 3196,
+        "answer_length": 345,
+        "citations": 5
+      },
+      {
+        "id": "q27",
+        "latency_ms": 7260,
+        "chunks_used": 5,
+        "tokens_used": 3144,
+        "answer_length": 333,
+        "citations": 5
+      },
+      {
+        "id": "q28",
+        "latency_ms": 11667,
+        "chunks_used": 5,
+        "tokens_used": 3224,
+        "answer_length": 396,
+        "citations": 5
+      },
+      {
+        "id": "q29",
+        "latency_ms": 10449,
+        "chunks_used": 5,
+        "tokens_used": 3309,
+        "answer_length": 453,
+        "citations": 5
+      },
+      {
+        "id": "q30",
+        "latency_ms": 14361,
+        "chunks_used": 5,
+        "tokens_used": 3271,
+        "answer_length": 425,
+        "citations": 5
+      }
+    ],
+    "agent": [
+      {
+        "id": "q01",
+        "latency_ms": 12194,
+        "chunks_used": 5,
+        "tokens_used": 4326,
+        "answer_length": 286,
+        "citations": 4,
+        "rounds": 1,
+        "confidence": 0.9,
+        "was_in_scope": true
+      },
+      {
+        "id": "q02",
+        "latency_ms": 12477,
+        "chunks_used": 5,
+        "tokens_used": 4396,
+        "answer_length": 325,
+        "citations": 3,
+        "rounds": 1,
+        "confidence": 0.9,
+        "was_in_scope": true
+      },
+      {
+        "id": "q03",
+        "latency_ms": 13185,
+        "chunks_used": 5,
+        "tokens_used": 4390,
+        "answer_length": 287,
+        "citations": 3,
+        "rounds": 1,
+        "confidence": 0.9,
+        "was_in_scope": true
+      },
+      {
+        "id": "q04",
+        "latency_ms": 9258,
+        "chunks_used": 7,
+        "tokens_used": 5295,
+        "answer_length": 208,
+        "citations": 2,
+        "rounds": 1,
+        "confidence": 0.9,
+        "was_in_scope": true
+      },
+      {
+        "id": "q05",
+        "latency_ms": 13642,
+        "chunks_used": 5,
+        "tokens_used": 4569,
+        "answer_length": 429,
+        "citations": 5,
+        "rounds": 1,
+        "confidence": 0.9,
+        "was_in_scope": true
+      },
+      {
+        "id": "q06",
+        "latency_ms": 9981,
+        "chunks_used": 5,
+        "tokens_used": 4398,
+        "answer_length": 309,
+        "citations": 3,
+        "rounds": 1,
+        "confidence": 0.9,
+        "was_in_scope": true
+      },
+      {
+        "id": "q07",
+        "latency_ms": 18829,
+        "chunks_used": 6,
+        "tokens_used": 5257,
+        "answer_length": 487,
+        "citations": 4,
+        "rounds": 1,
+        "confidence": 0.85,
+        "was_in_scope": true
+      },
+      {
+        "id": "q08",
+        "latency_ms": 15132,
+        "chunks_used": 8,
+        "tokens_used": 5784,
+        "answer_length": 345,
+        "citations": 5,
+        "rounds": 1,
+        "confidence": 0.9,
+        "was_in_scope": true
+      },
+      {
+        "id": "q09",
+        "latency_ms": 16251,
+        "chunks_used": 9,
+        "tokens_used": 7121,
+        "answer_length": 448,
+        "citations": 5,
+        "rounds": 1,
+        "confidence": 0.9,
+        "was_in_scope": true
+      },
+      {
+        "id": "q10",
+        "latency_ms": 14010,
+        "chunks_used": 5,
+        "tokens_used": 4487,
+        "answer_length": 352,
+        "citations": 5,
+        "rounds": 1,
+        "confidence": 0.9,
+        "was_in_scope": true
+      },
+      {
+        "id": "q11",
+        "latency_ms": 15487,
+        "chunks_used": 7,
+        "tokens_used": 5360,
+        "answer_length": 420,
+        "citations": 5,
+        "rounds": 1,
+        "confidence": 0.9,
+        "was_in_scope": true
+      },
+      {
+        "id": "q12",
+        "latency_ms": 17031,
+        "chunks_used": 5,
+        "tokens_used": 4731,
+        "answer_length": 408,
+        "citations": 2,
+        "rounds": 1,
+        "confidence": 0.9,
+        "was_in_scope": true
+      },
+      {
+        "id": "q13",
+        "latency_ms": 18534,
+        "chunks_used": 8,
+        "tokens_used": 6050,
+        "answer_length": 456,
+        "citations": 5,
+        "rounds": 1,
+        "confidence": 0.9,
+        "was_in_scope": true
+      },
+      {
+        "id": "q14",
+        "latency_ms": 21147,
+        "chunks_used": 8,
+        "tokens_used": 6157,
+        "answer_length": 398,
+        "citations": 5,
+        "rounds": 1,
+        "confidence": 0.9,
+        "was_in_scope": true
+      },
+      {
+        "id": "q15",
+        "latency_ms": 19191,
+        "chunks_used": 5,
+        "tokens_used": 4504,
+        "answer_length": 438,
+        "citations": 5,
+        "rounds": 1,
+        "confidence": 0.85,
+        "was_in_scope": true
+      },
+      {
+        "id": "q16",
+        "latency_ms": 25469,
+        "chunks_used": 10,
+        "tokens_used": 8606,
+        "answer_length": 398,
+        "citations": 7,
+        "rounds": 2,
+        "confidence": 0.3,
+        "was_in_scope": true
+      },
+      {
+        "id": "q17",
+        "latency_ms": 16653,
+        "chunks_used": 7,
+        "tokens_used": 5481,
+        "answer_length": 368,
+        "citations": 2,
+        "rounds": 1,
+        "confidence": 0.85,
+        "was_in_scope": true
+      },
+      {
+        "id": "q18",
+        "latency_ms": 18411,
+        "chunks_used": 5,
+        "tokens_used": 4465,
+        "answer_length": 332,
+        "citations": 2,
+        "rounds": 1,
+        "confidence": 0.8,
+        "was_in_scope": true
+      },
+      {
+        "id": "q19",
+        "latency_ms": 17968,
+        "chunks_used": 8,
+        "tokens_used": 6015,
+        "answer_length": 412,
+        "citations": 7,
+        "rounds": 1,
+        "confidence": 0.85,
+        "was_in_scope": true
+      },
+      {
+        "id": "q20",
+        "latency_ms": 12279,
+        "chunks_used": 5,
+        "tokens_used": 4370,
+        "answer_length": 274,
+        "citations": 3,
+        "rounds": 1,
+        "confidence": 0.9,
+        "was_in_scope": true
+      },
+      {
+        "id": "q21",
+        "latency_ms": 13607,
+        "chunks_used": 5,
+        "tokens_used": 4450,
+        "answer_length": 362,
+        "citations": 3,
+        "rounds": 1,
+        "confidence": 0.9,
+        "was_in_scope": true
+      },
+      {
+        "id": "q22",
+        "latency_ms": 15451,
+        "chunks_used": 8,
+        "tokens_used": 6056,
+        "answer_length": 378,
+        "citations": 5,
+        "rounds": 1,
+        "confidence": 0.9,
+        "was_in_scope": true
+      },
+      {
+        "id": "q23",
+        "latency_ms": 15232,
+        "chunks_used": 6,
+        "tokens_used": 5046,
+        "answer_length": 363,
+        "citations": 3,
+        "rounds": 1,
+        "confidence": 0.85,
+        "was_in_scope": true
+      },
+      {
+        "id": "q24",
+        "latency_ms": 13558,
+        "chunks_used": 5,
+        "tokens_used": 4442,
+        "answer_length": 337,
+        "citations": 5,
+        "rounds": 1,
+        "confidence": 0.9,
+        "was_in_scope": true
+      },
+      {
+        "id": "q25",
+        "latency_ms": 14755,
+        "chunks_used": 8,
+        "tokens_used": 6061,
+        "answer_length": 397,
+        "citations": 6,
+        "rounds": 1,
+        "confidence": 0.9,
+        "was_in_scope": true
+      },
+      {
+        "id": "q26",
+        "latency_ms": 14137,
+        "chunks_used": 7,
+        "tokens_used": 5562,
+        "answer_length": 348,
+        "citations": 6,
+        "rounds": 1,
+        "confidence": 0.9,
+        "was_in_scope": true
+      },
+      {
+        "id": "q27",
+        "latency_ms": 12063,
+        "chunks_used": 10,
+        "tokens_used": 7075,
+        "answer_length": 373,
+        "citations": 4,
+        "rounds": 1,
+        "confidence": 0.9,
+        "was_in_scope": true
+      },
+      {
+        "id": "q28",
+        "latency_ms": 10376,
+        "chunks_used": 5,
+        "tokens_used": 4403,
+        "answer_length": 340,
+        "citations": 3,
+        "rounds": 1,
+        "confidence": 0.9,
+        "was_in_scope": true
+      },
+      {
+        "id": "q29",
+        "latency_ms": 16775,
+        "chunks_used": 8,
+        "tokens_used": 6391,
+        "answer_length": 456,
+        "citations": 2,
+        "rounds": 1,
+        "confidence": 0.85,
+        "was_in_scope": true
+      },
+      {
+        "id": "q30",
+        "latency_ms": 17090,
+        "chunks_used": 10,
+        "tokens_used": 7078,
+        "answer_length": 413,
+        "citations": 3,
+        "rounds": 1,
+        "confidence": 0.85,
+        "was_in_scope": true
+      }
+    ]
+  }
+}

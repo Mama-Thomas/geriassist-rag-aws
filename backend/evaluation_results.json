@@ -1,0 +1,2671 @@
+{
+  "metadata": {
+    "timestamp": "2026-03-05T00:14:02.837257",
+    "total_questions": 30,
+    "top_k_values_tested": [
+      3,
+      5,
+      8
+    ]
+  },
+  "retrieval_metrics": {
+    "top_3": {
+      "avg_topic_recall": 0.607,
+      "avg_source_accuracy": 0.85,
+      "avg_search_latency_ms": 1.5,
+      "min_topic_recall": 0.0,
+      "max_topic_recall": 1.0
+    },
+    "top_5": {
+      "avg_topic_recall": 0.673,
+      "avg_source_accuracy": 0.883,
+      "avg_search_latency_ms": 0.8,
+      "min_topic_recall": 0.2,
+      "max_topic_recall": 1.0
+    },
+    "top_8": {
+      "avg_topic_recall": 0.753,
+      "avg_source_accuracy": 0.933,
+      "avg_search_latency_ms": 0.9,
+      "min_topic_recall": 0.4,
+      "max_topic_recall": 1.0
+    }
+  },
+  "rag_metrics": {
+    "avg_latency_ms": 8905.2,
+    "p95_latency_ms": 12005,
+    "avg_tokens_used": 3159.1,
+    "avg_topic_coverage": 0.673,
+    "avg_citation_grounding": 0.127,
+    "total_cost_estimate_usd": 0.0142
+  },
+  "by_category": {
+    "caregiving": {
+      "num_questions": 2,
+      "avg_recall_at_5": 0.7,
+      "avg_latency_ms": 9831.0
+    },
+    "mental_health": {
+      "num_questions": 2,
+      "avg_recall_at_5": 0.9,
+      "avg_latency_ms": 8627.5
+    },
+    "medication_safety": {
+      "num_questions": 2,
+      "avg_recall_at_5": 0.7,
+      "avg_latency_ms": 7657.0
+    },
+    "fall_prevention": {
+      "num_questions": 5,
+      "avg_recall_at_5": 0.64,
+      "avg_latency_ms": 7489.6
+    },
+    "chronic_conditions": {
+      "num_questions": 2,
+      "avg_recall_at_5": 0.8,
+      "avg_latency_ms": 11616.5
+    },
+    "safety": {
+      "num_questions": 1,
+      "avg_recall_at_5": 0.8,
+      "avg_latency_ms": 9202.0
+    },
+    "policy": {
+      "num_questions": 5,
+      "avg_recall_at_5": 0.64,
+      "avg_latency_ms": 9208.2
+    },
+    "cognitive_health": {
+      "num_questions": 1,
+      "avg_recall_at_5": 0.4,
+      "avg_latency_ms": 9056.0
+    },
+    "nutrition": {
+      "num_questions": 1,
+      "avg_recall_at_5": 1.0,
+      "avg_latency_ms": 7143.0
+    },
+    "healthy_aging": {
+      "num_questions": 4,
+      "avg_recall_at_5": 0.5,
+      "avg_latency_ms": 9457.0
+    },
+    "healthcare": {
+      "num_questions": 1,
+      "avg_recall_at_5": 0.8,
+      "avg_latency_ms": 9193.0
+    },
+    "substance_use": {
+      "num_questions": 1,
+      "avg_recall_at_5": 0.8,
+      "avg_latency_ms": 8763.0
+    },
+    "dementia": {
+      "num_questions": 2,
+      "avg_recall_at_5": 0.7,
+      "avg_latency_ms": 8663.5
+    },
+    "assessment": {
+      "num_questions": 1,
+      "avg_recall_at_5": 0.4,
+      "avg_latency_ms": 9691.0
+    }
+  },
+  "detailed_results": {
+    "retrieval": [
+      {
+        "question_id": "q01",
+        "question": "What are the main risk factors for falls in elderly patients?",
+        "category": "fall_prevention",
+        "embed_latency_ms": 376,
+        "results": {
+          "top_3": {
+            "topic_recall": 1.0,
+            "topics_found": [
+              "medications",
+              "balance",
+              "vision",
+              "home hazards",
+              "muscle weakness"
+            ],
+            "topics_missed": [],
+            "source_accuracy": 0.5,
+            "sources_found": [
+              "cdc"
+            ],
+            "search_latency_ms": 10,
+            "avg_distance": 0.5922
+          },
+          "top_5": {
+            "topic_recall": 1.0,
+            "topics_found": [
+              "medications",
+              "balance",
+              "vision",
+              "home hazards",
+              "muscle weakness"
+            ],
+            "topics_missed": [],
+            "source_accuracy": 0.5,
+            "sources_found": [
+              "who",
+              "cdc"
+            ],
+            "search_latency_ms": 0,
+            "avg_distance": 0.6305
+          },
+          "top_8": {
+            "topic_recall": 1.0,
+            "topics_found": [
+              "medications",
+              "balance",
+              "vision",
+              "home hazards",
+              "muscle weakness"
+            ],
+            "topics_missed": [],
+            "source_accuracy": 0.5,
+            "sources_found": [
+              "who",
+              "cdc"
+            ],
+            "search_latency_ms": 0,
+            "avg_distance": 0.6583
+          }
+        }
+      },
+      {
+        "question_id": "q02",
+        "question": "How does the STEADI initiative screen for fall risk?",
+        "category": "fall_prevention",
+        "embed_latency_ms": 382,
+        "results": {
+          "top_3": {
+            "topic_recall": 0.8,
+            "topics_found": [
+              "screening",
+              "algorithm",
+              "stay independent",
+              "assessment"
+            ],
+            "topics_missed": [
+              "three questions"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "cdc"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.5386
+          },
+          "top_5": {
+            "topic_recall": 0.8,
+            "topics_found": [
+              "screening",
+              "algorithm",
+              "stay independent",
+              "assessment"
+            ],
+            "topics_missed": [
+              "three questions"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "cdc"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.5725
+          },
+          "top_8": {
+            "topic_recall": 0.8,
+            "topics_found": [
+              "screening",
+              "algorithm",
+              "stay independent",
+              "assessment"
+            ],
+            "topics_missed": [
+              "three questions"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "cdc"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.6055
+          }
+        }
+      },
+      {
+        "question_id": "q03",
+        "question": "What home modifications can reduce fall risk for older adults?",
+        "category": "fall_prevention",
+        "embed_latency_ms": 251,
+        "results": {
+          "top_3": {
+            "topic_recall": 0.2,
+            "topics_found": [
+              "lighting"
+            ],
+            "topics_missed": [
+              "grab bars",
+              "rugs",
+              "stairs",
+              "bathroom"
+            ],
+            "source_accuracy": 0.5,
+            "sources_found": [
+              "who",
+              "cdc"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.595
+          },
+          "top_5": {
+            "topic_recall": 0.2,
+            "topics_found": [
+              "lighting"
+            ],
+            "topics_missed": [
+              "grab bars",
+              "rugs",
+              "stairs",
+              "bathroom"
+            ],
+            "source_accuracy": 0.5,
+            "sources_found": [
+              "who",
+              "cdc"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.6167
+          },
+          "top_8": {
+            "topic_recall": 0.8,
+            "topics_found": [
+              "lighting",
+              "grab bars",
+              "stairs",
+              "bathroom"
+            ],
+            "topics_missed": [
+              "rugs"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "who",
+              "nia",
+              "cdc"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.6336
+          }
+        }
+      },
+      {
+        "question_id": "q04",
+        "question": "What medications increase fall risk in older adults?",
+        "category": "medication_safety",
+        "embed_latency_ms": 368,
+        "results": {
+          "top_3": {
+            "topic_recall": 0.4,
+            "topics_found": [
+              "polypharmacy",
+              "blood pressure"
+            ],
+            "topics_missed": [
+              "sedatives",
+              "antihypertensives",
+              "psychotropics"
+            ],
+            "source_accuracy": 0.5,
+            "sources_found": [
+              "cdc"
+            ],
+            "search_latency_ms": 2,
+            "avg_distance": 0.5002
+          },
+          "top_5": {
+            "topic_recall": 0.4,
+            "topics_found": [
+              "polypharmacy",
+              "blood pressure"
+            ],
+            "topics_missed": [
+              "sedatives",
+              "antihypertensives",
+              "psychotropics"
+            ],
+            "source_accuracy": 0.5,
+            "sources_found": [
+              "cdc"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.5232
+          },
+          "top_8": {
+            "topic_recall": 0.4,
+            "topics_found": [
+              "polypharmacy",
+              "blood pressure"
+            ],
+            "topics_missed": [
+              "sedatives",
+              "antihypertensives",
+              "psychotropics"
+            ],
+            "source_accuracy": 0.5,
+            "sources_found": [
+              "cdc"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.5476
+          }
+        }
+      },
+      {
+        "question_id": "q05",
+        "question": "What are tips for taking medications safely as you age?",
+        "category": "medication_safety",
+        "embed_latency_ms": 338,
+        "results": {
+          "top_3": {
+            "topic_recall": 1.0,
+            "topics_found": [
+              "list",
+              "side effects",
+              "pharmacist",
+              "doctor",
+              "interactions"
+            ],
+            "topics_missed": [],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "nia"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.4985
+          },
+          "top_5": {
+            "topic_recall": 1.0,
+            "topics_found": [
+              "list",
+              "side effects",
+              "pharmacist",
+              "doctor",
+              "interactions"
+            ],
+            "topics_missed": [],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "nia"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.5604
+          },
+          "top_8": {
+            "topic_recall": 1.0,
+            "topics_found": [
+              "list",
+              "side effects",
+              "pharmacist",
+              "doctor",
+              "interactions"
+            ],
+            "topics_missed": [],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "nia"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.6229
+          }
+        }
+      },
+      {
+        "question_id": "q06",
+        "question": "What are the early signs and symptoms of Alzheimers disease?",
+        "category": "dementia",
+        "embed_latency_ms": 192,
+        "results": {
+          "top_3": {
+            "topic_recall": 0.6,
+            "topics_found": [
+              "memory loss",
+              "confusion",
+              "judgment"
+            ],
+            "topics_missed": [
+              "difficulty",
+              "mood changes"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "nia"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.8083
+          },
+          "top_5": {
+            "topic_recall": 0.8,
+            "topics_found": [
+              "memory loss",
+              "confusion",
+              "difficulty",
+              "judgment"
+            ],
+            "topics_missed": [
+              "mood changes"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "nia"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.8435
+          },
+          "top_8": {
+            "topic_recall": 0.8,
+            "topics_found": [
+              "memory loss",
+              "confusion",
+              "difficulty",
+              "judgment"
+            ],
+            "topics_missed": [
+              "mood changes"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "nia"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.8876
+          }
+        }
+      },
+      {
+        "question_id": "q07",
+        "question": "How should caregivers manage behavioral symptoms in dementia patients?",
+        "category": "dementia",
+        "embed_latency_ms": 240,
+        "results": {
+          "top_3": {
+            "topic_recall": 0.6,
+            "topics_found": [
+              "routine",
+              "communication",
+              "environment"
+            ],
+            "topics_missed": [
+              "safety",
+              "patience"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "nia"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.8147
+          },
+          "top_5": {
+            "topic_recall": 0.6,
+            "topics_found": [
+              "routine",
+              "communication",
+              "environment"
+            ],
+            "topics_missed": [
+              "safety",
+              "patience"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "who",
+              "nia"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.8294
+          },
+          "top_8": {
+            "topic_recall": 0.8,
+            "topics_found": [
+              "routine",
+              "communication",
+              "environment",
+              "safety"
+            ],
+            "topics_missed": [
+              "patience"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "who",
+              "nia"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.8524
+          }
+        }
+      },
+      {
+        "question_id": "q08",
+        "question": "What support resources are available for Alzheimer's caregivers?",
+        "category": "caregiving",
+        "embed_latency_ms": 364,
+        "results": {
+          "top_3": {
+            "topic_recall": 0.4,
+            "topics_found": [
+              "support groups",
+              "respite care"
+            ],
+            "topics_missed": [
+              "helpline",
+              "planning",
+              "self-care"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "nia"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.5904
+          },
+          "top_5": {
+            "topic_recall": 0.6,
+            "topics_found": [
+              "support groups",
+              "respite care",
+              "self-care"
+            ],
+            "topics_missed": [
+              "helpline",
+              "planning"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "nia"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.6184
+          },
+          "top_8": {
+            "topic_recall": 0.6,
+            "topics_found": [
+              "support groups",
+              "respite care",
+              "self-care"
+            ],
+            "topics_missed": [
+              "helpline",
+              "planning"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "who",
+              "nia"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.6449
+          }
+        }
+      },
+      {
+        "question_id": "q09",
+        "question": "What is healthy aging and how can older adults maintain their health?",
+        "category": "healthy_aging",
+        "embed_latency_ms": 461,
+        "results": {
+          "top_3": {
+            "topic_recall": 0.6,
+            "topics_found": [
+              "exercise",
+              "social",
+              "mental"
+            ],
+            "topics_missed": [
+              "nutrition",
+              "preventive care"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "who",
+              "nia"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.7122
+          },
+          "top_5": {
+            "topic_recall": 0.6,
+            "topics_found": [
+              "exercise",
+              "social",
+              "mental"
+            ],
+            "topics_missed": [
+              "nutrition",
+              "preventive care"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "who",
+              "nia"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.7304
+          },
+          "top_8": {
+            "topic_recall": 0.6,
+            "topics_found": [
+              "exercise",
+              "social",
+              "mental"
+            ],
+            "topics_missed": [
+              "nutrition",
+              "preventive care"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "who",
+              "nia"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.7517
+          }
+        }
+      },
+      {
+        "question_id": "q10",
+        "question": "What exercise recommendations exist for adults over 65?",
+        "category": "healthy_aging",
+        "embed_latency_ms": 375,
+        "results": {
+          "top_3": {
+            "topic_recall": 0.8,
+            "topics_found": [
+              "strength",
+              "balance",
+              "aerobic",
+              "flexibility"
+            ],
+            "topics_missed": [
+              "minutes per week"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "who",
+              "nia"
+            ],
+            "search_latency_ms": 2,
+            "avg_distance": 0.7067
+          },
+          "top_5": {
+            "topic_recall": 0.8,
+            "topics_found": [
+              "strength",
+              "balance",
+              "aerobic",
+              "flexibility"
+            ],
+            "topics_missed": [
+              "minutes per week"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "who",
+              "nia"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.7233
+          },
+          "top_8": {
+            "topic_recall": 0.8,
+            "topics_found": [
+              "strength",
+              "balance",
+              "aerobic",
+              "flexibility"
+            ],
+            "topics_missed": [
+              "minutes per week"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "who",
+              "nia"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.7417
+          }
+        }
+      },
+      {
+        "question_id": "q11",
+        "question": "How does high blood pressure affect older adults and how is it managed?",
+        "category": "chronic_conditions",
+        "embed_latency_ms": 233,
+        "results": {
+          "top_3": {
+            "topic_recall": 0.8,
+            "topics_found": [
+              "heart disease",
+              "stroke",
+              "medication",
+              "lifestyle"
+            ],
+            "topics_missed": [
+              "monitoring"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "who",
+              "nia"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.6894
+          },
+          "top_5": {
+            "topic_recall": 0.8,
+            "topics_found": [
+              "heart disease",
+              "stroke",
+              "medication",
+              "lifestyle"
+            ],
+            "topics_missed": [
+              "monitoring"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "who",
+              "nia"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.7673
+          },
+          "top_8": {
+            "topic_recall": 0.8,
+            "topics_found": [
+              "heart disease",
+              "stroke",
+              "medication",
+              "lifestyle"
+            ],
+            "topics_missed": [
+              "monitoring"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "who",
+              "nia"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.832
+          }
+        }
+      },
+      {
+        "question_id": "q12",
+        "question": "What are common sleep problems in older adults and how can they be addressed?",
+        "category": "healthy_aging",
+        "embed_latency_ms": 244,
+        "results": {
+          "top_3": {
+            "topic_recall": 0.4,
+            "topics_found": [
+              "insomnia",
+              "routine"
+            ],
+            "topics_missed": [
+              "sleep hygiene",
+              "medications",
+              "napping"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "nia"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.7739
+          },
+          "top_5": {
+            "topic_recall": 0.4,
+            "topics_found": [
+              "insomnia",
+              "routine"
+            ],
+            "topics_missed": [
+              "sleep hygiene",
+              "medications",
+              "napping"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "nia",
+              "cdc"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.8018
+          },
+          "top_8": {
+            "topic_recall": 0.4,
+            "topics_found": [
+              "insomnia",
+              "routine"
+            ],
+            "topics_missed": [
+              "sleep hygiene",
+              "medications",
+              "napping"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "who",
+              "nia",
+              "cdc"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.8283
+          }
+        }
+      },
+      {
+        "question_id": "q13",
+        "question": "How can older adults prevent memory loss and maintain cognitive health?",
+        "category": "cognitive_health",
+        "embed_latency_ms": 492,
+        "results": {
+          "top_3": {
+            "topic_recall": 0.4,
+            "topics_found": [
+              "exercise",
+              "sleep"
+            ],
+            "topics_missed": [
+              "social activity",
+              "mental stimulation",
+              "nutrition"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "nia"
+            ],
+            "search_latency_ms": 2,
+            "avg_distance": 0.6225
+          },
+          "top_5": {
+            "topic_recall": 0.4,
+            "topics_found": [
+              "exercise",
+              "sleep"
+            ],
+            "topics_missed": [
+              "social activity",
+              "mental stimulation",
+              "nutrition"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "nia"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.6671
+          },
+          "top_8": {
+            "topic_recall": 0.4,
+            "topics_found": [
+              "exercise",
+              "sleep"
+            ],
+            "topics_missed": [
+              "social activity",
+              "mental stimulation",
+              "nutrition"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "nia"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.7135
+          }
+        }
+      },
+      {
+        "question_id": "q14",
+        "question": "What is the WHO Decade of Healthy Ageing and what are its goals?",
+        "category": "policy",
+        "embed_latency_ms": 327,
+        "results": {
+          "top_3": {
+            "topic_recall": 0.2,
+            "topics_found": [
+              "ageism"
+            ],
+            "topics_missed": [
+              "2021-2030",
+              "age-friendly",
+              "integrated care",
+              "long-term care"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "who"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.494
+          },
+          "top_5": {
+            "topic_recall": 0.2,
+            "topics_found": [
+              "ageism"
+            ],
+            "topics_missed": [
+              "2021-2030",
+              "age-friendly",
+              "integrated care",
+              "long-term care"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "who"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.5035
+          },
+          "top_8": {
+            "topic_recall": 0.4,
+            "topics_found": [
+              "long-term care",
+              "ageism"
+            ],
+            "topics_missed": [
+              "2021-2030",
+              "age-friendly",
+              "integrated care"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "who"
+            ],
+            "search_latency_ms": 0,
+            "avg_distance": 0.5173
+          }
+        }
+      },
+      {
+        "question_id": "q15",
+        "question": "What is integrated care for older people according to WHO guidelines?",
+        "category": "policy",
+        "embed_latency_ms": 255,
+        "results": {
+          "top_3": {
+            "topic_recall": 0.8,
+            "topics_found": [
+              "person-centred",
+              "functional ability",
+              "coordination",
+              "community"
+            ],
+            "topics_missed": [
+              "primary care"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "who"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.5773
+          },
+          "top_5": {
+            "topic_recall": 1.0,
+            "topics_found": [
+              "person-centred",
+              "primary care",
+              "functional ability",
+              "coordination",
+              "community"
+            ],
+            "topics_missed": [],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "who"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.6055
+          },
+          "top_8": {
+            "topic_recall": 1.0,
+            "topics_found": [
+              "person-centred",
+              "primary care",
+              "functional ability",
+              "coordination",
+              "community"
+            ],
+            "topics_missed": [],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "who"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.6291
+          }
+        }
+      },
+      {
+        "question_id": "q16",
+        "question": "What are the key components of a comprehensive geriatric assessment?",
+        "category": "assessment",
+        "embed_latency_ms": 232,
+        "results": {
+          "top_3": {
+            "topic_recall": 0.0,
+            "topics_found": [],
+            "topics_missed": [
+              "functional",
+              "cognitive",
+              "medical",
+              "social",
+              "nutrition"
+            ],
+            "source_accuracy": 0.0,
+            "sources_found": [
+              "who"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.844
+          },
+          "top_5": {
+            "topic_recall": 0.4,
+            "topics_found": [
+              "functional",
+              "medical"
+            ],
+            "topics_missed": [
+              "cognitive",
+              "social",
+              "nutrition"
+            ],
+            "source_accuracy": 0.0,
+            "sources_found": [
+              "who"
+            ],
+            "search_latency_ms": 0,
+            "avg_distance": 0.8619
+          },
+          "top_8": {
+            "topic_recall": 0.6,
+            "topics_found": [
+              "functional",
+              "cognitive",
+              "medical"
+            ],
+            "topics_missed": [
+              "social",
+              "nutrition"
+            ],
+            "source_accuracy": 0.5,
+            "sources_found": [
+              "who",
+              "cdc"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.8761
+          }
+        }
+      },
+      {
+        "question_id": "q17",
+        "question": "How can chronic pain be managed in older adults?",
+        "category": "chronic_conditions",
+        "embed_latency_ms": 253,
+        "results": {
+          "top_3": {
+            "topic_recall": 0.6,
+            "topics_found": [
+              "medication",
+              "physical therapy",
+              "side effects"
+            ],
+            "topics_missed": [
+              "non-drug",
+              "assessment"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "nia"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.6529
+          },
+          "top_5": {
+            "topic_recall": 0.8,
+            "topics_found": [
+              "medication",
+              "physical therapy",
+              "side effects",
+              "assessment"
+            ],
+            "topics_missed": [
+              "non-drug"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "nia"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.7092
+          },
+          "top_8": {
+            "topic_recall": 0.8,
+            "topics_found": [
+              "medication",
+              "physical therapy",
+              "side effects",
+              "assessment"
+            ],
+            "topics_missed": [
+              "non-drug"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "who",
+              "nia"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.7486
+          }
+        }
+      },
+      {
+        "question_id": "q18",
+        "question": "What dietary supplements are important for older adults?",
+        "category": "nutrition",
+        "embed_latency_ms": 184,
+        "results": {
+          "top_3": {
+            "topic_recall": 0.8,
+            "topics_found": [
+              "vitamin d",
+              "calcium",
+              "b12",
+              "doctor"
+            ],
+            "topics_missed": [
+              "interactions"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "nia"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.6077
+          },
+          "top_5": {
+            "topic_recall": 1.0,
+            "topics_found": [
+              "vitamin d",
+              "calcium",
+              "b12",
+              "doctor",
+              "interactions"
+            ],
+            "topics_missed": [],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "nia"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.6459
+          },
+          "top_8": {
+            "topic_recall": 1.0,
+            "topics_found": [
+              "vitamin d",
+              "calcium",
+              "b12",
+              "doctor",
+              "interactions"
+            ],
+            "topics_missed": [],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "who",
+              "nia",
+              "cdc"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.7198
+          }
+        }
+      },
+      {
+        "question_id": "q19",
+        "question": "How can older adults communicate effectively with their healthcare providers?",
+        "category": "healthcare",
+        "embed_latency_ms": 324,
+        "results": {
+          "top_3": {
+            "topic_recall": 0.8,
+            "topics_found": [
+              "questions",
+              "list",
+              "medications",
+              "concerns"
+            ],
+            "topics_missed": [
+              "follow-up"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "who",
+              "nia"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.7232
+          },
+          "top_5": {
+            "topic_recall": 0.8,
+            "topics_found": [
+              "questions",
+              "list",
+              "medications",
+              "concerns"
+            ],
+            "topics_missed": [
+              "follow-up"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "who",
+              "nia"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.7598
+          },
+          "top_8": {
+            "topic_recall": 0.8,
+            "topics_found": [
+              "questions",
+              "list",
+              "medications",
+              "concerns"
+            ],
+            "topics_missed": [
+              "follow-up"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "who",
+              "nia"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.7873
+          }
+        }
+      },
+      {
+        "question_id": "q20",
+        "question": "What are the signs of depression in older adults?",
+        "category": "mental_health",
+        "embed_latency_ms": 396,
+        "results": {
+          "top_3": {
+            "topic_recall": 0.8,
+            "topics_found": [
+              "sadness",
+              "loss of interest",
+              "fatigue",
+              "treatment"
+            ],
+            "topics_missed": [
+              "sleep changes"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "nia"
+            ],
+            "search_latency_ms": 2,
+            "avg_distance": 0.63
+          },
+          "top_5": {
+            "topic_recall": 0.8,
+            "topics_found": [
+              "sadness",
+              "loss of interest",
+              "fatigue",
+              "treatment"
+            ],
+            "topics_missed": [
+              "sleep changes"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "nia"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.6954
+          },
+          "top_8": {
+            "topic_recall": 0.8,
+            "topics_found": [
+              "sadness",
+              "loss of interest",
+              "fatigue",
+              "treatment"
+            ],
+            "topics_missed": [
+              "sleep changes"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "who",
+              "nia"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.7588
+          }
+        }
+      },
+      {
+        "question_id": "q21",
+        "question": "How does alcohol affect older adults differently than younger people?",
+        "category": "substance_use",
+        "embed_latency_ms": 337,
+        "results": {
+          "top_3": {
+            "topic_recall": 0.8,
+            "topics_found": [
+              "medications",
+              "balance",
+              "falls",
+              "health conditions"
+            ],
+            "topics_missed": [
+              "metabolism"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "nia"
+            ],
+            "search_latency_ms": 0,
+            "avg_distance": 0.5725
+          },
+          "top_5": {
+            "topic_recall": 0.8,
+            "topics_found": [
+              "medications",
+              "balance",
+              "falls",
+              "health conditions"
+            ],
+            "topics_missed": [
+              "metabolism"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "nia"
+            ],
+            "search_latency_ms": 0,
+            "avg_distance": 0.6683
+          },
+          "top_8": {
+            "topic_recall": 1.0,
+            "topics_found": [
+              "metabolism",
+              "medications",
+              "balance",
+              "falls",
+              "health conditions"
+            ],
+            "topics_missed": [],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "who",
+              "nia"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.772
+          }
+        }
+      },
+      {
+        "question_id": "q22",
+        "question": "What are age-friendly environments and why do they matter?",
+        "category": "policy",
+        "embed_latency_ms": 323,
+        "results": {
+          "top_3": {
+            "topic_recall": 0.6,
+            "topics_found": [
+              "housing",
+              "transportation",
+              "community"
+            ],
+            "topics_missed": [
+              "accessibility",
+              "social participation"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "who"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.7229
+          },
+          "top_5": {
+            "topic_recall": 0.6,
+            "topics_found": [
+              "housing",
+              "transportation",
+              "community"
+            ],
+            "topics_missed": [
+              "accessibility",
+              "social participation"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "who"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.7339
+          },
+          "top_8": {
+            "topic_recall": 0.8,
+            "topics_found": [
+              "housing",
+              "transportation",
+              "community",
+              "accessibility"
+            ],
+            "topics_missed": [
+              "social participation"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "who"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.7455
+          }
+        }
+      },
+      {
+        "question_id": "q23",
+        "question": "How can caregivers protect themselves from burnout?",
+        "category": "caregiving",
+        "embed_latency_ms": 326,
+        "results": {
+          "top_3": {
+            "topic_recall": 0.8,
+            "topics_found": [
+              "respite",
+              "support",
+              "health",
+              "help"
+            ],
+            "topics_missed": [
+              "boundaries"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "nia"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.8355
+          },
+          "top_5": {
+            "topic_recall": 0.8,
+            "topics_found": [
+              "respite",
+              "support",
+              "health",
+              "help"
+            ],
+            "topics_missed": [
+              "boundaries"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "nia"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.8527
+          },
+          "top_8": {
+            "topic_recall": 0.8,
+            "topics_found": [
+              "respite",
+              "support",
+              "health",
+              "help"
+            ],
+            "topics_missed": [
+              "boundaries"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "nia"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.8798
+          }
+        }
+      },
+      {
+        "question_id": "q24",
+        "question": "What balance and strength exercises reduce fall risk?",
+        "category": "fall_prevention",
+        "embed_latency_ms": 484,
+        "results": {
+          "top_3": {
+            "topic_recall": 0.2,
+            "topics_found": [
+              "standing"
+            ],
+            "topics_missed": [
+              "chair rise",
+              "heel-to-toe",
+              "leg strength",
+              "practice"
+            ],
+            "source_accuracy": 0.5,
+            "sources_found": [
+              "cdc"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.7412
+          },
+          "top_5": {
+            "topic_recall": 0.6,
+            "topics_found": [
+              "standing",
+              "leg strength",
+              "practice"
+            ],
+            "topics_missed": [
+              "chair rise",
+              "heel-to-toe"
+            ],
+            "source_accuracy": 0.5,
+            "sources_found": [
+              "cdc"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.7438
+          },
+          "top_8": {
+            "topic_recall": 0.6,
+            "topics_found": [
+              "standing",
+              "leg strength",
+              "practice"
+            ],
+            "topics_missed": [
+              "chair rise",
+              "heel-to-toe"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "nia",
+              "cdc"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.7469
+          }
+        }
+      },
+      {
+        "question_id": "q25",
+        "question": "What is ageism and what are its health consequences?",
+        "category": "policy",
+        "embed_latency_ms": 206,
+        "results": {
+          "top_3": {
+            "topic_recall": 0.6,
+            "topics_found": [
+              "discrimination",
+              "stereotypes",
+              "mental health"
+            ],
+            "topics_missed": [
+              "health outcomes",
+              "access to care"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "who"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.7829
+          },
+          "top_5": {
+            "topic_recall": 0.6,
+            "topics_found": [
+              "discrimination",
+              "stereotypes",
+              "mental health"
+            ],
+            "topics_missed": [
+              "health outcomes",
+              "access to care"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "who"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.8053
+          },
+          "top_8": {
+            "topic_recall": 0.6,
+            "topics_found": [
+              "discrimination",
+              "stereotypes",
+              "mental health"
+            ],
+            "topics_missed": [
+              "health outcomes",
+              "access to care"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "who"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.8246
+          }
+        }
+      },
+      {
+        "question_id": "q26",
+        "question": "How should older adults prepare for cold weather safety?",
+        "category": "safety",
+        "embed_latency_ms": 303,
+        "results": {
+          "top_3": {
+            "topic_recall": 0.8,
+            "topics_found": [
+              "hypothermia",
+              "frostbite",
+              "clothing",
+              "warning signs"
+            ],
+            "topics_missed": [
+              "heating"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "who",
+              "nia"
+            ],
+            "search_latency_ms": 2,
+            "avg_distance": 0.7819
+          },
+          "top_5": {
+            "topic_recall": 0.8,
+            "topics_found": [
+              "hypothermia",
+              "frostbite",
+              "clothing",
+              "warning signs"
+            ],
+            "topics_missed": [
+              "heating"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "who",
+              "nia"
+            ],
+            "search_latency_ms": 0,
+            "avg_distance": 0.8362
+          },
+          "top_8": {
+            "topic_recall": 0.8,
+            "topics_found": [
+              "hypothermia",
+              "frostbite",
+              "clothing",
+              "warning signs"
+            ],
+            "topics_missed": [
+              "heating"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "who",
+              "nia",
+              "cdc"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.8806
+          }
+        }
+      },
+      {
+        "question_id": "q27",
+        "question": "What is the coordinated care plan approach in the STEADI program?",
+        "category": "fall_prevention",
+        "embed_latency_ms": 230,
+        "results": {
+          "top_3": {
+            "topic_recall": 0.6,
+            "topics_found": [
+              "assessment",
+              "intervention",
+              "team"
+            ],
+            "topics_missed": [
+              "follow-up",
+              "patient education"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "cdc"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.693
+          },
+          "top_5": {
+            "topic_recall": 0.6,
+            "topics_found": [
+              "assessment",
+              "intervention",
+              "team"
+            ],
+            "topics_missed": [
+              "follow-up",
+              "patient education"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "cdc"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.7182
+          },
+          "top_8": {
+            "topic_recall": 1.0,
+            "topics_found": [
+              "assessment",
+              "intervention",
+              "follow-up",
+              "team",
+              "patient education"
+            ],
+            "topics_missed": [],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "cdc"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.7615
+          }
+        }
+      },
+      {
+        "question_id": "q28",
+        "question": "What functional ability means for older adults according to the WHO?",
+        "category": "policy",
+        "embed_latency_ms": 186,
+        "results": {
+          "top_3": {
+            "topic_recall": 0.8,
+            "topics_found": [
+              "intrinsic capacity",
+              "environment",
+              "activities",
+              "independence"
+            ],
+            "topics_missed": [
+              "well-being"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "who"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.6283
+          },
+          "top_5": {
+            "topic_recall": 0.8,
+            "topics_found": [
+              "intrinsic capacity",
+              "environment",
+              "activities",
+              "independence"
+            ],
+            "topics_missed": [
+              "well-being"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "who"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.6598
+          },
+          "top_8": {
+            "topic_recall": 1.0,
+            "topics_found": [
+              "intrinsic capacity",
+              "environment",
+              "activities",
+              "independence",
+              "well-being"
+            ],
+            "topics_missed": [],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "who"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.69
+          }
+        }
+      },
+      {
+        "question_id": "q29",
+        "question": "How does aging in place work and what supports are needed?",
+        "category": "healthy_aging",
+        "embed_latency_ms": 282,
+        "results": {
+          "top_3": {
+            "topic_recall": 0.2,
+            "topics_found": [
+              "community services"
+            ],
+            "topics_missed": [
+              "home modifications",
+              "technology",
+              "caregiving",
+              "planning"
+            ],
+            "source_accuracy": 0.0,
+            "sources_found": [
+              "who"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.6919
+          },
+          "top_5": {
+            "topic_recall": 0.2,
+            "topics_found": [
+              "community services"
+            ],
+            "topics_missed": [
+              "home modifications",
+              "technology",
+              "caregiving",
+              "planning"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "who",
+              "nia"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.7234
+          },
+          "top_8": {
+            "topic_recall": 0.4,
+            "topics_found": [
+              "home modifications",
+              "community services"
+            ],
+            "topics_missed": [
+              "technology",
+              "caregiving",
+              "planning"
+            ],
+            "source_accuracy": 1.0,
+            "sources_found": [
+              "who",
+              "nia"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.7498
+          }
+        }
+      },
+      {
+        "question_id": "q30",
+        "question": "What strategies help older adults maintain social connections and avoid isolation?",
+        "category": "mental_health",
+        "embed_latency_ms": 477,
+        "results": {
+          "top_3": {
+            "topic_recall": 0.8,
+            "topics_found": [
+              "community",
+              "technology",
+              "family",
+              "activities"
+            ],
+            "topics_missed": [
+              "volunteering"
+            ],
+            "source_accuracy": 0.5,
+            "sources_found": [
+              "who"
+            ],
+            "search_latency_ms": 2,
+            "avg_distance": 0.6875
+          },
+          "top_5": {
+            "topic_recall": 1.0,
+            "topics_found": [
+              "community",
+              "volunteering",
+              "technology",
+              "family",
+              "activities"
+            ],
+            "topics_missed": [],
+            "source_accuracy": 0.5,
+            "sources_found": [
+              "who"
+            ],
+            "search_latency_ms": 0,
+            "avg_distance": 0.7077
+          },
+          "top_8": {
+            "topic_recall": 1.0,
+            "topics_found": [
+              "community",
+              "volunteering",
+              "technology",
+              "family",
+              "activities"
+            ],
+            "topics_missed": [],
+            "source_accuracy": 0.5,
+            "sources_found": [
+              "who"
+            ],
+            "search_latency_ms": 1,
+            "avg_distance": 0.7307
+          }
+        }
+      }
+    ],
+    "rag": [
+      {
+        "question_id": "q01",
+        "answer_length": 330,
+        "citations_count": 5,
+        "sources_cited": [
+          "cdc steadi fall risk factors",
+          "test doc",
+          "cdc steadi coordinated care plan",
+          "who world report on ageing and health",
+          "cdc steadi coordinated care plan"
+        ],
+        "citation_grounding_rate": 0.0,
+        "topic_coverage": 1.0,
+        "topics_in_answer": [
+          "medications",
+          "balance",
+          "vision",
+          "home hazards",
+          "muscle weakness"
+        ],
+        "acknowledges_limits": false,
+        "latency_ms": 11299,
+        "tokens_used": 3004
+      },
+      {
+        "question_id": "q02",
+        "answer_length": 309,
+        "citations_count": 5,
+        "sources_cited": [
+          "cdc steadi coordinated care plan",
+          "cdc steadi algorithm for fall risk screening",
+          "cdc steadi coordinated care plan",
+          "cdc steadi coordinated care plan",
+          "cdc steadi coordinated care plan"
+        ],
+        "citation_grounding_rate": 0.0,
+        "topic_coverage": 0.6,
+        "topics_in_answer": [
+          "screening",
+          "stay independent",
+          "assessment"
+        ],
+        "acknowledges_limits": false,
+        "latency_ms": 6187,
+        "tokens_used": 3076
+      },
+      {
+        "question_id": "q03",
+        "answer_length": 272,
+        "citations_count": 5,
+        "sources_cited": [
+          "who world report on ageing and health",
+          "cdc steadi coordinated care plan",
+          "cdc steadi coordinated care plan",
+          "who world report on ageing and health",
+          "cdc steadi coordinated care plan"
+        ],
+        "citation_grounding_rate": 0.0,
+        "topic_coverage": 0.4,
+        "topics_in_answer": [
+          "lighting",
+          "rugs"
+        ],
+        "acknowledges_limits": false,
+        "latency_ms": 7030,
+        "tokens_used": 3049
+      },
+      {
+        "question_id": "q04",
+        "answer_length": 190,
+        "citations_count": 5,
+        "sources_cited": [
+          "cdc steadi coordinated care plan",
+          "cdc steadi coordinated care plan",
+          "cdc steadi coordinated care plan",
+          "cdc steadi coordinated care plan",
+          "cdc steadi coordinated care plan"
+        ],
+        "citation_grounding_rate": 0.0,
+        "topic_coverage": 0.6,
+        "topics_in_answer": [
+          "sedatives",
+          "polypharmacy",
+          "blood pressure"
+        ],
+        "acknowledges_limits": false,
+        "latency_ms": 5359,
+        "tokens_used": 2943
+      },
+      {
+        "question_id": "q05",
+        "answer_length": 430,
+        "citations_count": 5,
+        "sources_cited": [
+          "nia tips for taking medicines safely",
+          "nia tips for taking medicines safely",
+          "nia pain and older adults",
+          "nia caregivers handbook",
+          "nia caregivers handbook"
+        ],
+        "citation_grounding_rate": 0.0,
+        "topic_coverage": 1.0,
+        "topics_in_answer": [
+          "list",
+          "side effects",
+          "pharmacist",
+          "doctor",
+          "interactions"
+        ],
+        "acknowledges_limits": false,
+        "latency_ms": 9955,
+        "tokens_used": 3317
+      },
+      {
+        "question_id": "q06",
+        "answer_length": 233,
+        "citations_count": 5,
+        "sources_cited": [
+          "nia alzheimers disease fact sheet",
+          "nia alzheimers disease fact sheet",
+          "nia alzheimers disease fact sheet",
+          "nia caring for a person with alzheimers disease",
+          "nia alzheimers disease fact sheet"
+        ],
+        "citation_grounding_rate": 0.0,
+        "topic_coverage": 0.4,
+        "topics_in_answer": [
+          "difficulty",
+          "judgment"
+        ],
+        "acknowledges_limits": false,
+        "latency_ms": 5666,
+        "tokens_used": 3056
+      },
+      {
+        "question_id": "q07",
+        "answer_length": 403,
+        "citations_count": 5,
+        "sources_cited": [
+          "nia caring for a person with alzheimers disease",
+          "nia caring for a person with alzheimers disease",
+          "nia caring for a person with alzheimers disease",
+          "who world report on ageing and health",
+          "who world report on ageing and health"
+        ],
+        "citation_grounding_rate": 0.0,
+        "topic_coverage": 0.6,
+        "topics_in_answer": [
+          "routine",
+          "communication",
+          "environment"
+        ],
+        "acknowledges_limits": false,
+        "latency_ms": 11661,
+        "tokens_used": 3283
+      },
+      {
+        "question_id": "q08",
+        "answer_length": 353,
+        "citations_count": 5,
+        "sources_cited": [
+          "nia alzheimers disease fact sheet",
+          "nia caring for a person with alzheimers disease",
+          "nia caring for a person with alzheimers disease",
+          "nia caring for a person with alzheimers disease",
+          "nia alzheimers disease fact sheet"
+        ],
+        "citation_grounding_rate": 0.0,
+        "topic_coverage": 0.2,
+        "topics_in_answer": [
+          "support groups"
+        ],
+        "acknowledges_limits": false,
+        "latency_ms": 11983,
+        "tokens_used": 2983
+      },
+      {
+        "question_id": "q09",
+        "answer_length": 391,
+        "citations_count": 5,
+        "sources_cited": [
+          "nia what do we know about healthy aging",
+          "nia what do we know about healthy aging",
+          "who world report on ageing and health",
+          "nia what do we know about healthy aging",
+          "who decade of healthy ageing global strategy"
+        ],
+        "citation_grounding_rate": 1.0,
+        "topic_coverage": 0.8,
+        "topics_in_answer": [
+          "exercise",
+          "nutrition",
+          "social",
+          "mental"
+        ],
+        "acknowledges_limits": false,
+        "latency_ms": 7971,
+        "tokens_used": 3233
+      },
+      {
+        "question_id": "q10",
+        "answer_length": 361,
+        "citations_count": 5,
+        "sources_cited": [
+          "nia exercise and physical activity brochure",
+          "nia exercise and physical activity brochure",
+          "who world report on ageing and health",
+          "who world report on ageing and health",
+          "nia get fit for life exercise guide"
+        ],
+        "citation_grounding_rate": 0.0,
+        "topic_coverage": 0.8,
+        "topics_in_answer": [
+          "strength",
+          "balance",
+          "aerobic",
+          "flexibility"
+        ],
+        "acknowledges_limits": false,
+        "latency_ms": 9449,
+        "tokens_used": 3205
+      },
+      {
+        "question_id": "q11",
+        "answer_length": 451,
+        "citations_count": 5,
+        "sources_cited": [
+          "nia high blood pressure and older adults",
+          "nia high blood pressure and older adults",
+          "who world report on ageing and health",
+          "who world report on ageing and health",
+          "who world report on ageing and health"
+        ],
+        "citation_grounding_rate": 0.0,
+        "topic_coverage": 1.0,
+        "topics_in_answer": [
+          "heart disease",
+          "stroke",
+          "medication",
+          "lifestyle",
+          "monitoring"
+        ],
+        "acknowledges_limits": false,
+        "latency_ms": 11228,
+        "tokens_used": 3049
+      },
+      {
+        "question_id": "q12",
+        "answer_length": 349,
+        "citations_count": 5,
+        "sources_cited": [
+          "nia sleep and older adults",
+          "nia sleep and older adults",
+          "nia sleep and older adults",
+          "nia what do we know about healthy aging",
+          "cdc steadi coordinated care plan"
+        ],
+        "citation_grounding_rate": 0.0,
+        "topic_coverage": 0.6,
+        "topics_in_answer": [
+          "insomnia",
+          "medications",
+          "routine"
+        ],
+        "acknowledges_limits": false,
+        "latency_ms": 12166,
+        "tokens_used": 3163
+      },
+      {
+        "question_id": "q13",
+        "answer_length": 391,
+        "citations_count": 5,
+        "sources_cited": [
+          "nia what do we know about healthy aging",
+          "nia what do we know about healthy aging",
+          "nia understanding memory loss",
+          "nia what do we know about healthy aging",
+          "nia what do we know about healthy aging"
+        ],
+        "citation_grounding_rate": 0.0,
+        "topic_coverage": 0.2,
+        "topics_in_answer": [
+          "sleep"
+        ],
+        "acknowledges_limits": false,
+        "latency_ms": 9056,
+        "tokens_used": 3228
+      },
+      {
+        "question_id": "q14",
+        "answer_length": 382,
+        "citations_count": 5,
+        "sources_cited": [
+          "who un decade of healthy ageing plan of action 2021 2030",
+          "who un decade of healthy ageing plan of action 2021 2030",
+          "who decade of healthy ageing global strategy",
+          "who integrated care for older people icope second edition",
+          "who un decade of healthy ageing plan of action 2021 2030"
+        ],
+        "citation_grounding_rate": 0.0,
+        "topic_coverage": 0.2,
+        "topics_in_answer": [
+          "2021-2030"
+        ],
+        "acknowledges_limits": false,
+        "latency_ms": 9873,
+        "tokens_used": 3260
+      },
+      {
+        "question_id": "q15",
+        "answer_length": 400,
+        "citations_count": 5,
+        "sources_cited": [
+          "who world report on ageing and health",
+          "who world report on ageing and health",
+          "who decade of healthy ageing global strategy",
+          "who integrated care for older people icope second edition",
+          "who decade of healthy ageing global strategy"
+        ],
+        "citation_grounding_rate": 0.0,
+        "topic_coverage": 0.8,
+        "topics_in_answer": [
+          "person-centred",
+          "functional ability",
+          "coordination",
+          "community"
+        ],
+        "acknowledges_limits": false,
+        "latency_ms": 10344,
+        "tokens_used": 3201
+      },
+      {
+        "question_id": "q16",
+        "answer_length": 356,
+        "citations_count": 5,
+        "sources_cited": [
+          "who world report on ageing and health",
+          "who world report on ageing and health",
+          "who world report on ageing and health",
+          "who decade of healthy ageing baseline report",
+          "who world report on ageing and health"
+        ],
+        "citation_grounding_rate": 0.0,
+        "topic_coverage": 1.0,
+        "topics_in_answer": [
+          "functional",
+          "cognitive",
+          "medical",
+          "social",
+          "nutrition"
+        ],
+        "acknowledges_limits": false,
+        "latency_ms": 9691,
+        "tokens_used": 3184
+      },
+      {
+        "question_id": "q17",
+        "answer_length": 452,
+        "citations_count": 5,
+        "sources_cited": [
+          "nia pain and older adults",
+          "nia pain and older adults",
+          "nia pain and older adults",
+          "nia pain and older adults",
+          "nia pain and older adults"
+        ],
+        "citation_grounding_rate": 0.0,
+        "topic_coverage": 0.8,
+        "topics_in_answer": [
+          "medication",
+          "physical therapy",
+          "non-drug",
+          "side effects"
+        ],
+        "acknowledges_limits": false,
+        "latency_ms": 12005,
+        "tokens_used": 3319
+      },
+      {
+        "question_id": "q18",
+        "answer_length": 286,
+        "citations_count": 5,
+        "sources_cited": [
+          "nia dietary supplements for older adults",
+          "nia dietary supplements for older adults",
+          "nia dietary supplements for older adults",
+          "nia dietary supplements for older adults",
+          "nia dietary supplements for older adults"
+        ],
+        "citation_grounding_rate": 0.0,
+        "topic_coverage": 0.8,
+        "topics_in_answer": [
+          "vitamin d",
+          "calcium",
+          "b12",
+          "interactions"
+        ],
+        "acknowledges_limits": false,
+        "latency_ms": 7143,
+        "tokens_used": 3083
+      },
+      {
+        "question_id": "q19",
+        "answer_length": 441,
+        "citations_count": 5,
+        "sources_cited": [
+          "nia caregivers handbook",
+          "who world report on ageing and health",
+          "nia caregivers handbook",
+          "nia talking with your doctor guide",
+          "nia talking with your doctor guide"
+        ],
+        "citation_grounding_rate": 0.8,
+        "topic_coverage": 0.8,
+        "topics_in_answer": [
+          "questions",
+          "list",
+          "medications",
+          "concerns"
+        ],
+        "acknowledges_limits": false,
+        "latency_ms": 9193,
+        "tokens_used": 3297
+      },
+      {
+        "question_id": "q20",
+        "answer_length": 244,
+        "citations_count": 5,
+        "sources_cited": [
+          "nia depression and older adults",
+          "nia what do we know about healthy aging",
+          "nia depression and older adults",
+          "nia depression and older adults",
+          "nia depression and older adults"
+        ],
+        "citation_grounding_rate": 0.0,
+        "topic_coverage": 0.8,
+        "topics_in_answer": [
+          "sadness",
+          "loss of interest",
+          "fatigue",
+          "treatment"
+        ],
+        "acknowledges_limits": false,
+        "latency_ms": 6783,
+        "tokens_used": 3052
+      },
+      {
+        "question_id": "q21",
+        "answer_length": 364,
+        "citations_count": 5,
+        "sources_cited": [
+          "nia older adults and alcohol",
+          "nia older adults and alcohol",
+          "nia older adults and alcohol",
+          "nia older adults and alcohol",
+          "nia what do we know about healthy aging"
+        ],
+        "citation_grounding_rate": 0.0,
+        "topic_coverage": 0.8,
+        "topics_in_answer": [
+          "medications",
+          "balance",
+          "falls",
+          "health conditions"
+        ],
+        "acknowledges_limits": false,
+        "latency_ms": 8763,
+        "tokens_used": 3165
+      },
+      {
+        "question_id": "q22",
+        "answer_length": 380,
+        "citations_count": 5,
+        "sources_cited": [
+          "who world report on ageing and health",
+          "who world report on ageing and health",
+          "who decade of healthy ageing global strategy",
+          "who un decade of healthy ageing plan of action 2021 2030",
+          "who world report on ageing and health"
+        ],
+        "citation_grounding_rate": 0.0,
+        "topic_coverage": 0.8,
+        "topics_in_answer": [
+          "housing",
+          "transportation",
+          "community",
+          "accessibility"
+        ],
+        "acknowledges_limits": false,
+        "latency_ms": 9198,
+        "tokens_used": 3233
+      },
+      {
+        "question_id": "q23",
+        "answer_length": 361,
+        "citations_count": 5,
+        "sources_cited": [
+          "nia caregivers handbook",
+          "nia caregivers handbook",
+          "nia caregivers handbook",
+          "nia caregivers handbook",
+          "nia caregivers handbook"
+        ],
+        "citation_grounding_rate": 1.0,
+        "topic_coverage": 1.0,
+        "topics_in_answer": [
+          "respite",
+          "support",
+          "boundaries",
+          "health",
+          "help"
+        ],
+        "acknowledges_limits": false,
+        "latency_ms": 7679,
+        "tokens_used": 3219
+      },
+      {
+        "question_id": "q24",
+        "answer_length": 278,
+        "citations_count": 5,
+        "sources_cited": [
+          "cdc steadi coordinated care plan",
+          "cdc steadi pocket guide   fall prevention",
+          "cdc steadi pocket guide fall prevention",
+          "cdc steadi coordinated care plan",
+          "cdc steadi coordinated care plan"
+        ],
+        "citation_grounding_rate": 0.0,
+        "topic_coverage": 0.0,
+        "topics_in_answer": [],
+        "acknowledges_limits": false,
+        "latency_ms": 5663,
+        "tokens_used": 3047
+      },
+      {
+        "question_id": "q25",
+        "answer_length": 309,
+        "citations_count": 5,
+        "sources_cited": [
+          "who world report on ageing and health",
+          "who un decade of healthy ageing plan of action 2021 2030",
+          "who integrated care for older people icope second edition",
+          "who integrated care for older people icope second edition",
+          "who decade of healthy ageing baseline report"
+        ],
+        "citation_grounding_rate": 0.0,
+        "topic_coverage": 0.8,
+        "topics_in_answer": [
+          "discrimination",
+          "stereotypes",
+          "health outcomes",
+          "mental health"
+        ],
+        "acknowledges_limits": false,
+        "latency_ms": 8286,
+        "tokens_used": 3153
+      },
+      {
+        "question_id": "q26",
+        "answer_length": 332,
+        "citations_count": 5,
+        "sources_cited": [
+          "nia cold weather safety tips for older adults",
+          "nia sleep and older adults",
+          " who clinical consortium on healthy ageing 2024",
+          "nia caregivers handbook",
+          " who clinical consortium on healthy ageing 2024"
+        ],
+        "citation_grounding_rate": 0.0,
+        "topic_coverage": 0.8,
+        "topics_in_answer": [
+          "hypothermia",
+          "frostbite",
+          "clothing",
+          "warning signs"
+        ],
+        "acknowledges_limits": false,
+        "latency_ms": 9202,
+        "tokens_used": 3161
+      },
+      {
+        "question_id": "q27",
+        "answer_length": 338,
+        "citations_count": 5,
+        "sources_cited": [
+          "cdc steadi coordinated care plan",
+          "cdc steadi coordinated care plan",
+          "cdc steadi coordinated care plan",
+          "cdc steadi evaluation guide for fall prevention programs",
+          "cdc steadi evaluation guide fall prevention programs"
+        ],
+        "citation_grounding_rate": 0.0,
+        "topic_coverage": 0.6,
+        "topics_in_answer": [
+          "assessment",
+          "intervention",
+          "team"
+        ],
+        "acknowledges_limits": false,
+        "latency_ms": 7269,
+        "tokens_used": 3150
+      },
+      {
+        "question_id": "q28",
+        "answer_length": 381,
+        "citations_count": 5,
+        "sources_cited": [
+          "who decade of healthy ageing baseline report",
+          "who decade of healthy ageing baseline report",
+          "who decade of healthy ageing baseline report",
+          "who world report on ageing and health",
+          "who decade of healthy ageing baseline report"
+        ],
+        "citation_grounding_rate": 0.0,
+        "topic_coverage": 1.0,
+        "topics_in_answer": [
+          "intrinsic capacity",
+          "environment",
+          "activities",
+          "independence",
+          "well-being"
+        ],
+        "acknowledges_limits": false,
+        "latency_ms": 8340,
+        "tokens_used": 3220
+      },
+      {
+        "question_id": "q29",
+        "answer_length": 365,
+        "citations_count": 5,
+        "sources_cited": [
+          "who world report on ageing and health",
+          "who world report on ageing and health",
+          "who world report on ageing and health",
+          "nia caregivers handbook",
+          "who world report on ageing and health"
+        ],
+        "citation_grounding_rate": 0.0,
+        "topic_coverage": 0.4,
+        "topics_in_answer": [
+          "home modifications",
+          "community services"
+        ],
+        "acknowledges_limits": false,
+        "latency_ms": 8242,
+        "tokens_used": 3183
+      },
+      {
+        "question_id": "q30",
+        "answer_length": 409,
+        "citations_count": 5,
+        "sources_cited": [
+          "who world report on ageing and health",
+          "who world report on ageing and health",
+          "who world report on ageing and health",
+          "who world report on ageing and health",
+          "who world report on ageing and health"
+        ],
+        "citation_grounding_rate": 1.0,
+        "topic_coverage": 0.6,
+        "topics_in_answer": [
+          "community",
+          "technology",
+          "activities"
+        ],
+        "acknowledges_limits": false,
+        "latency_ms": 10472,
+        "tokens_used": 3256
+      }
+    ]
+  }
+}
