@@ -343,6 +343,18 @@ async def get_eval_results():
 from app.agent.orchestrator import agent_query
 
 
+@app.post("/followups")
+def get_followups(payload: dict):
+    """Generate follow-up question suggestions based on a question and answer."""
+    from app.generation.rag import generate_followups
+    question = payload.get("question", "")
+    answer = payload.get("answer", "")
+    if not question or not answer:
+        return {"suggestions": []}
+    suggestions = generate_followups(question, answer)
+    return {"suggestions": suggestions}
+
+
 @app.post("/query/agent")
 async def agent_query_endpoint(
     request: QueryRequest,

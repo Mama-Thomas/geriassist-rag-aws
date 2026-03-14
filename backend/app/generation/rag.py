@@ -130,3 +130,40 @@ def query_rag(
         "tokens_used": tokens_used,
         "chunks_used": len(chunks_with_metadata),
     }
+
+
+def generate_followups(question: str, answer: str) -> list[str]:
+    """Generate 3 relevant follow-up questions based on the question and answer."""
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            temperature=0.7,
+            max_tokens=200,
+            messages=[
+                {
+                    "role": "system",
+                    "content": (
+                        "You are a clinical assistant helping users explore geriatric medicine topics. "
+                        "Given a question and answer, generate exactly 3 follow-up questions the user might ask next. "
+                        "Rules:\n"
+                        "- Each question must be meaningfully different from the original question\n"
+                        "- Questions should explore related clinical aspects not covered in the answer\n"
+                        "- Keep each question under 15 words\n"
+                        "- Return ONLY a JSON array of 3 strings, no markdown, no preamble\n"
+                        "Example: [\"What exercises reduce fall risk?\", \"How is polypharmacy managed?\", \"What role does nutrition play?\"]"
+                    ),
+                },
+                {
+                    "role": "user",
+                    "content": f"Question: {question}\n\nAnswer summary: {answer[:600]}",
+                },
+            ],
+        )
+        import json
+        raw = response.choices[0].message.content.strip()
+        suggestions = json.loads(raw)
+        if isinstance(suggestions, list):
+            return [s for s in suggestions if s.lower() not in question.lower()][:3]
+    except Exception as e:
+        print(f"[followups] error: {e}")
+    return []
