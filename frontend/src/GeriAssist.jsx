@@ -512,71 +512,45 @@ function Trace({ metadata }) {
 }
 
 // ── Follow-ups ──
-function FollowUps({ question, result, onSelect }) {
+function FollowUps({ question, result, onSelect, apiBase }) {
   const [sug, setSug] = useState([]);
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
-    if (!result?.answer) return;
-    const q = question.toLowerCase();
-    let f = [];
-    if (q.includes("fall") || q.includes("steadi"))
-      f = [
-        "What exercises reduce fall risk?",
-        "How should medications be reviewed for fall prevention?",
-        "What home modifications prevent falls?",
-      ];
-    else if (q.includes("dementia") || q.includes("alzheimer"))
-      f = [
-        "What caregiver resources are available?",
-        "How does dementia affect fall risk?",
-        "What are non-drug interventions for dementia?",
-      ];
-    else if (q.includes("medication") || q.includes("medicine"))
-      f = [
-        "What is polypharmacy and why is it risky?",
-        "What does the Beers Criteria recommend?",
-        "How should medication reviews be conducted?",
-      ];
-    else if (q.includes("exercise") || q.includes("physical"))
-      f = [
-        "What balance exercises are recommended?",
-        "How does exercise reduce fall risk?",
-        "WHO guidelines on physical activity for older adults?",
-      ];
-    else if (q.includes("depression") || q.includes("mental"))
-      f = [
-        "How does depression affect fall risk?",
-        "Signs of isolation in older adults?",
-        "Treatments for depression in older adults?",
-      ];
-    else if (q.includes("who") || q.includes("policy") || q.includes("ageing"))
-      f = [
-        "What is integrated care for older people?",
-        "What are age-friendly environments?",
-        "Role of ageism in health outcomes?",
-      ];
-    else
-      f = [
-        "What are fall risk factors for older adults?",
-        "What does CDC STEADI recommend?",
-        "How can caregivers support healthy aging?",
-      ];
-    setSug(f.slice(0, 3));
+    if (!result?.answer || !question) return;
+    setSug([]);
+    setLoading(true);
+    fetch(`${apiBase}/followups`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ question, answer: result.answer }),
+    })
+      .then((r) => r.json())
+      .then((data) => setSug(data.suggestions || []))
+      .catch(() => setSug([]))
+      .finally(() => setLoading(false));
   }, [question, result]);
 
-  if (!sug.length || !result) return null;
+  if (!result) return null;
+
+  if (loading) return (
+    <div style={{ marginTop: 20 }}>
+      <div style={{ fontSize: 10, fontWeight: 600, color: C.textMuted, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 8, fontFamily: FONT.body }}>
+        Follow-up
+      </div>
+      <div style={{ display: "flex", gap: 6 }}>
+        {[120, 160, 140].map((w, i) => (
+          <div key={i} style={{ height: 28, width: w, borderRadius: 4, background: C.surfaceAlt, animation: "pulse 1.5s ease-in-out infinite", animationDelay: `${i * 0.15}s` }} />
+        ))}
+      </div>
+    </div>
+  );
+
+  if (!sug.length) return null;
+
   return (
     <div style={{ marginTop: 20 }}>
-      <div
-        style={{
-          fontSize: 10,
-          fontWeight: 600,
-          color: C.textMuted,
-          textTransform: "uppercase",
-          letterSpacing: "0.1em",
-          marginBottom: 8,
-          fontFamily: FONT.body,
-        }}
-      >
+      <div style={{ fontSize: 10, fontWeight: 600, color: C.textMuted, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 8, fontFamily: FONT.body }}>
         Follow-up
       </div>
       <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
@@ -584,25 +558,9 @@ function FollowUps({ question, result, onSelect }) {
           <button
             key={i}
             onClick={() => onSelect(s)}
-            style={{
-              padding: "5px 12px",
-              borderRadius: 4,
-              border: `1px solid ${C.border}`,
-              background: C.white,
-              color: C.textSecondary,
-              fontSize: 12,
-              cursor: "pointer",
-              fontFamily: FONT.body,
-              transition: "all 0.15s",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = C.burgundy;
-              e.currentTarget.style.color = C.burgundy;
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = C.border;
-              e.currentTarget.style.color = C.textSecondary;
-            }}
+            style={{ padding: "5px 12px", borderRadius: 4, border: `1px solid ${C.border}`, background: C.white, color: C.textSecondary, fontSize: 12, cursor: "pointer", fontFamily: FONT.body, transition: "all 0.15s" }}
+            onMouseEnter={(e) => { e.currentTarget.style.borderColor = C.burgundy; e.currentTarget.style.color = C.burgundy; }}
+            onMouseLeave={(e) => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.color = C.textSecondary; }}
           >
             {s}
           </button>
@@ -840,13 +798,13 @@ export default function GeriAssist() {
   const clearThread = () => setThread([]);
 
   return (
-    <div style={{ minHeight: "100vh", background: C.bg, color: C.text }}>
+    <div style={{ height: "100vh", display: "flex", flexDirection: "column", background: C.bg, color: C.text, overflow: "hidden" }}>
       <link
         href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
         rel="stylesheet"
       />
 
-      <div style={{ maxWidth: 740, margin: "0 auto", padding: "0 24px" }}>
+      <div style={{ flexShrink: 0, maxWidth: 740, width: "100%", margin: "0 auto", padding: "0 24px" }}>
         {/* Header */}
         <header
           style={{
@@ -949,6 +907,11 @@ export default function GeriAssist() {
             ))}
           </div>
         )}
+
+      </div>{/* end static top */}
+
+      {/* ── Scrollable messages area ── */}
+      <div style={{ flex: 1, overflowY: "auto", maxWidth: 740, width: "100%", margin: "0 auto", padding: "0 24px 20px" }}>
 
         {/* ── Conversation thread ── */}
         {thread.length > 0 && (
@@ -1092,7 +1055,7 @@ export default function GeriAssist() {
           {stats ? `${stats.documents} documents · ${stats.vectors?.toLocaleString()} vectors` : "…"}{" "}
           · FastAPI + FAISS + OpenAI · Built by Mama Thomas
         </div>
-      </div>{/* end scrollable */}
+      </div>{/* end scrollable messages */}
 
       {/* ── Fixed bottom input bar ── */}
       <div style={{ flexShrink: 0, borderTop: `1px solid ${C.border}`, background: C.bg, padding: "14px 0 0" }}>
@@ -1122,7 +1085,7 @@ export default function GeriAssist() {
                   letterSpacing: mode === key ? "0.01em" : 0,
                 }}
               >
-                {key === "agent" ? "Agent RAG (multi-step retrieval)" : "Standard RAG (single step)"}
+                {key === "agent" ? "Agent RAG (multi-step)" : "Standard RAG (single step)"}
               </button>
             ))}
           </div>
@@ -1199,7 +1162,7 @@ export default function GeriAssist() {
 
           {/* Tip text */}
           <p style={{ margin: "8px 0 0", fontSize: 11, color: C.textLight, fontFamily: FONT.body, textAlign: "center" }}>
-            Tip: Each question is answered independently — include the topic again in follow-up questions for best results.
+            Tip: Each question is answered independently. Include the topic again in follow-up questions for best results.
           </p>
         </div>
       </div>
