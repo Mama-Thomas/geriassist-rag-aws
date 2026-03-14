@@ -38,6 +38,11 @@ Evaluate and respond with ONLY valid JSON (no markdown):
 Rules:
 - is_sufficient: true if the context contains enough information to give a useful, grounded answer
 - confidence: how confident you are that a good answer can be generated (0.0 = no relevant info, 1.0 = perfect coverage)
+  - 0.9-1.0: context directly addresses the question with multiple relevant sources
+  - 0.7-0.9: context covers the main question well, minor gaps only
+  - 0.5-0.7: context is partially relevant but missing key aspects
+  - 0.0-0.5: context has little to no relevant information
+- Do NOT penalize confidence for exhaustiveness — if the main question can be answered well, score 0.85+
 - If is_sufficient is true, reformulated_query should be empty string
 - If is_sufficient is false, suggest a different search angle to find the missing information
 """
@@ -149,7 +154,7 @@ def research_query(
     vector_store: FAISSVectorStore,
     db: Session,
     max_rounds: int = 3,
-    top_k: int = 5,
+    top_k: int = 8,
 ) -> dict:
     """
     Multi-step research agent.
@@ -213,7 +218,7 @@ def research_query(
 
         # Search with reformulated query
         query_embedding = generate_embedding(reformulated)
-        search_results = vector_store.search(query_embedding, top_k=top_k)
+        search_results = vector_store.search(query_embedding, top_k=top_k * 2)
 
         new_chunks = _fetch_chunks_with_metadata(search_results, db)
         added = 0
@@ -231,10 +236,7 @@ def research_query(
             "new_chunks_added": added,
         })
 
-        # If no new chunks found, stop
-        if added == 0:
-            break
-
+        # If no new chunks found, increment round but keep trying (different angle next eval)
         current_round += 1
 
     # Determine if we should be cautious based on last sufficiency eval
