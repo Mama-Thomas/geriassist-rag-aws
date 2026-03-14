@@ -512,63 +512,58 @@ function Trace({ metadata }) {
 }
 
 // ── Follow-ups ──
-function FollowUps({ question, result, onSelect, apiBase }) {
+function FollowUps({ question, result, onSelect }) {
   const [sug, setSug] = useState([]);
-  const [loading, setLoading] = useState(false);
-
   useEffect(() => {
-    if (!result?.answer || !question) return;
-    setSug([]);
-    setLoading(true);
-    fetch(`${apiBase}/followups`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ question, answer: result.answer }),
-    })
-      .then((r) => r.json())
-      .then((data) => setSug(data.suggestions || []))
-      .catch(() => setSug([]))
-      .finally(() => setLoading(false));
+    if (!result?.answer) return;
+    const q = question.toLowerCase();
+    let f = [];
+    if (q.includes("fall") || q.includes("steadi"))
+      f = [
+        "What exercises reduce fall risk?",
+        "How should medications be reviewed for fall prevention?",
+        "What home modifications prevent falls?",
+      ];
+    else if (q.includes("dementia") || q.includes("alzheimer"))
+      f = [
+        "What caregiver resources are available?",
+        "How does dementia affect fall risk?",
+        "What are non-drug interventions for dementia?",
+      ];
+    else if (q.includes("medication") || q.includes("medicine"))
+      f = [
+        "What is polypharmacy and why is it risky?",
+        "What does the Beers Criteria recommend?",
+        "How should medication reviews be conducted?",
+      ];
+    else if (q.includes("exercise") || q.includes("physical"))
+      f = [
+        "What balance exercises are recommended?",
+        "How does exercise reduce fall risk?",
+        "WHO guidelines on physical activity for older adults?",
+      ];
+    else if (q.includes("depression") || q.includes("mental"))
+      f = [
+        "How does depression affect fall risk?",
+        "Signs of isolation in older adults?",
+        "Treatments for depression in older adults?",
+      ];
+    else if (q.includes("who") || q.includes("policy") || q.includes("ageing"))
+      f = [
+        "What is integrated care for older people?",
+        "What are age-friendly environments?",
+        "Role of ageism in health outcomes?",
+      ];
+    else
+      f = [
+        "What are fall risk factors for older adults?",
+        "What does CDC STEADI recommend?",
+        "How can caregivers support healthy aging?",
+      ];
+    setSug(f.slice(0, 3));
   }, [question, result]);
 
-  if (!result) return null;
-
-  if (loading) return (
-    <div style={{ marginTop: 20 }}>
-      <div
-        style={{
-          fontSize: 10,
-          fontWeight: 600,
-          color: C.textMuted,
-          textTransform: "uppercase",
-          letterSpacing: "0.1em",
-          marginBottom: 8,
-          fontFamily: FONT.body,
-        }}
-      >
-        Follow-up
-      </div>
-      <div style={{ display: "flex", gap: 6 }}>
-        {[120, 160, 140].map((w, i) => (
-          <div
-            key={i}
-            style={{
-              height: 28,
-              width: w,
-              borderRadius: 4,
-              background: C.surfaceAlt,
-              animation: "pulse 1.5s ease-in-out infinite",
-              animationDelay: `${i * 0.15}s`,
-            }}
-          />
-        ))}
-        <style>{`@keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:0.8} }`}</style>
-      </div>
-    </div>
-  );
-
-  if (!sug.length) return null;
-
+  if (!sug.length || !result) return null;
   return (
     <div style={{ marginTop: 20 }}>
       <div
@@ -922,10 +917,10 @@ export default function GeriAssist() {
             }}
           >
             {[
-              { l: "Documents", v: stats.documents },
-              { l: "Chunks", v: stats.chunks?.toLocaleString() },
-              { l: "Vectors", v: stats.vectors?.toLocaleString() },
-              { l: "Queries", v: stats.queries_logged },
+              { l: "research papers indexed", v: stats.documents },
+              { l: "text chunks", v: stats.chunks?.toLocaleString() },
+              { l: "vector embeddings", v: stats.vectors?.toLocaleString() },
+              { l: "queries processed", v: stats.queries_logged },
             ].map(({ l, v }) => (
               <div key={l}>
                 <span
@@ -954,133 +949,6 @@ export default function GeriAssist() {
             ))}
           </div>
         )}
-
-        {/* Input section */}
-        <div style={{ paddingTop: 28 }}>
-          {/* Mode toggle */}
-          <div style={{ display: "flex", gap: 0, marginBottom: 16 }}>
-            {["agent", "standard"].map((key) => (
-              <button
-                key={key}
-                onClick={() => setMode(key)}
-                style={{
-                  padding: "6px 16px",
-                  border: `1px solid ${C.border}`,
-                  cursor: "pointer",
-                  fontSize: 12,
-                  fontWeight: 500,
-                  fontFamily: FONT.body,
-                  transition: "all 0.15s",
-                  borderRadius: key === "agent" ? "4px 0 0 4px" : "0 4px 4px 0",
-                  marginLeft: key === "standard" ? -1 : 0,
-                  background: mode === key ? C.burgundy : C.white,
-                  color: mode === key ? C.white : C.textSecondary,
-                  borderColor: mode === key ? C.burgundy : C.border,
-                  zIndex: mode === key ? 1 : 0,
-                  position: "relative",
-                }}
-              >
-                {key === "agent" ? "Agent RAG" : "Standard RAG"}
-              </button>
-            ))}
-          </div>
-
-          {/* Input */}
-          <div style={{ display: "flex", gap: 10 }}>
-            <textarea
-              ref={ref}
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  submit();
-                }
-              }}
-              placeholder="Ask a geriatric clinical question…"
-              rows={2}
-              style={{
-                flex: 1,
-                background: C.white,
-                border: `1px solid ${C.border}`,
-                borderRadius: 4,
-                padding: "10px 14px",
-                color: C.text,
-                fontSize: 14,
-                fontFamily: FONT.body,
-                resize: "none",
-                outline: "none",
-                lineHeight: 1.6,
-                transition: "border-color 0.2s",
-              }}
-              onFocus={(e) => (e.target.style.borderColor = C.burgundy)}
-              onBlur={(e) => (e.target.style.borderColor = C.border)}
-            />
-            <button
-              onClick={() => submit()}
-              disabled={loading || !q.trim()}
-              style={{
-                padding: "0 20px",
-                borderRadius: 4,
-                border: `1px solid ${C.burgundy}`,
-                cursor: loading ? "wait" : "pointer",
-                background: C.burgundy,
-                color: C.white,
-                fontSize: 13,
-                fontWeight: 600,
-                fontFamily: FONT.body,
-                transition: "all 0.15s",
-                opacity: !q.trim() ? 0.4 : 1,
-                whiteSpace: "nowrap",
-              }}
-              onMouseEnter={(e) => {
-                if (!loading)
-                  e.currentTarget.style.background = C.burgundyLight;
-              }}
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.background = C.burgundy)
-              }
-            >
-              {loading ? "Searching…" : "Ask"}
-            </button>
-          </div>
-
-          {/* Example questions */}
-          <div
-            style={{ display: "flex", gap: 6, flexWrap: "wrap", marginTop: 10 }}
-          >
-            {EXAMPLES.map((ex, i) => (
-              <button
-                key={i}
-                onClick={() => {
-                  setQ(ex);
-                  ref.current?.focus();
-                }}
-                style={{
-                  padding: "3px 9px",
-                  borderRadius: 3,
-                  border: `1px solid ${C.border}`,
-                  background: C.white,
-                  color: C.textMuted,
-                  fontSize: 11,
-                  cursor: "pointer",
-                  fontFamily: FONT.body,
-                  transition: "all 0.15s",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = C.burgundy;
-                  e.currentTarget.style.color = C.burgundy;
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = C.border;
-                  e.currentTarget.style.color = C.textMuted;
-                }}
-              >
-                {ex.length > 48 ? ex.slice(0, 48) + "…" : ex}
-              </button>
-            ))}
-          </div>
-        </div>
 
         {/* ── Conversation thread ── */}
         {thread.length > 0 && (
@@ -1197,39 +1065,143 @@ export default function GeriAssist() {
             <button
               onClick={clearThread}
               style={{
-                background: "none",
-                border: "none",
-                fontSize: 11,
-                color: C.textLight,
+                background: C.white,
+                border: `1px solid ${C.border}`,
+                borderRadius: 4,
+                fontSize: 12,
+                color: C.textSecondary,
                 fontFamily: FONT.body,
                 cursor: "pointer",
-                padding: "4px 8px",
-                transition: "color 0.15s",
+                padding: "6px 14px",
+                transition: "all 0.15s",
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = C.textMuted)}
-              onMouseLeave={(e) => (e.currentTarget.style.color = C.textLight)}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = C.burgundy; e.currentTarget.style.color = C.burgundy; }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.color = C.textSecondary; }}
             >
-              Clear conversation
+              ↺ Clear conversation
             </button>
           </div>
         )}
 
         {/* Footer */}
-        <footer
-          style={{
-            textAlign: "center",
-            padding: "24px 0 28px",
-            fontSize: 11,
-            color: C.textLight,
-            fontFamily: FONT.body,
-          }}
-        >
+        <div style={{ textAlign: "center", padding: "16px 0 24px", fontSize: 11, color: C.textLight, fontFamily: FONT.body }}>
           GeriAssist v0.1.0 ·{" "}
-          {stats
-            ? `${stats.documents} documents · ${stats.vectors?.toLocaleString()} vectors`
-            : "…"}{" "}
+          {stats ? `${stats.documents} documents · ${stats.vectors?.toLocaleString()} vectors` : "…"}{" "}
           · FastAPI + FAISS + OpenAI · Built by Mama Thomas
-        </footer>
+        </div>
+      </div>{/* end scrollable */}
+
+      {/* ── Fixed bottom input bar ── */}
+      <div style={{ flexShrink: 0, borderTop: `1px solid ${C.border}`, background: C.bg, padding: "14px 0 0" }}>
+        <div style={{ maxWidth: 740, margin: "0 auto", padding: "0 24px 16px" }}>
+
+          {/* Mode toggle */}
+          <div style={{ display: "flex", gap: 0, marginBottom: 12 }}>
+            {["agent", "standard"].map((key) => (
+              <button
+                key={key}
+                onClick={() => setMode(key)}
+                style={{
+                  padding: "6px 14px",
+                  border: `1px solid ${C.border}`,
+                  cursor: "pointer",
+                  fontSize: 11,
+                  fontWeight: mode === key ? 700 : 500,
+                  fontFamily: FONT.body,
+                  transition: "all 0.15s",
+                  borderRadius: key === "agent" ? "4px 0 0 4px" : "0 4px 4px 0",
+                  marginLeft: key === "standard" ? -1 : 0,
+                  background: mode === key ? C.burgundy : C.white,
+                  color: mode === key ? C.white : C.textSecondary,
+                  borderColor: mode === key ? C.burgundy : C.border,
+                  zIndex: mode === key ? 1 : 0,
+                  position: "relative",
+                  letterSpacing: mode === key ? "0.01em" : 0,
+                }}
+              >
+                {key === "agent" ? "Agent RAG (multi-step retrieval)" : "Standard RAG (single step)"}
+              </button>
+            ))}
+          </div>
+
+          {/* Input row */}
+          <div style={{ display: "flex", gap: 10 }}>
+            <textarea
+              ref={ref}
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  submit();
+                }
+              }}
+              placeholder="Ask a geriatric clinical question…"
+              rows={2}
+              style={{
+                flex: 1,
+                background: C.white,
+                border: `1px solid ${C.border}`,
+                borderRadius: 4,
+                padding: "10px 14px",
+                color: C.text,
+                fontSize: 14,
+                fontFamily: FONT.body,
+                resize: "none",
+                outline: "none",
+                lineHeight: 1.6,
+                transition: "border-color 0.2s",
+              }}
+              onFocus={(e) => (e.target.style.borderColor = C.burgundy)}
+              onBlur={(e) => (e.target.style.borderColor = C.border)}
+            />
+            <button
+              onClick={() => submit()}
+              disabled={loading || !q.trim()}
+              style={{
+                padding: "0 20px",
+                borderRadius: 4,
+                border: `1px solid ${C.burgundy}`,
+                cursor: loading ? "wait" : "pointer",
+                background: C.burgundy,
+                color: C.white,
+                fontSize: 13,
+                fontWeight: 600,
+                fontFamily: FONT.body,
+                transition: "all 0.15s",
+                opacity: !q.trim() ? 0.4 : 1,
+                whiteSpace: "nowrap",
+              }}
+              onMouseEnter={(e) => { if (!loading) e.currentTarget.style.background = C.burgundyLight; }}
+              onMouseLeave={(e) => (e.currentTarget.style.background = C.burgundy)}
+            >
+              {loading ? "Searching…" : "Ask"}
+            </button>
+          </div>
+
+          {/* Example chips */}
+          <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginTop: 8 }}>
+            {EXAMPLES.map((ex, i) => (
+              <button
+                key={i}
+                onClick={() => { setQ(ex); ref.current?.focus(); }}
+                style={{ padding: "3px 9px", borderRadius: 3, border: `1px solid ${C.border}`, background: C.white, color: C.textMuted, fontSize: 11, cursor: "pointer", fontFamily: FONT.body, transition: "all 0.15s" }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = C.burgundy; e.currentTarget.style.color = C.burgundy; }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.color = C.textMuted; }}
+              >
+                {ex.length > 48 ? ex.slice(0, 48) + "…" : ex}
+              </button>
+            ))}
+          </div>
+
+          {/* Tip text */}
+          <p style={{ margin: "8px 0 0", fontSize: 11, color: C.textLight, fontFamily: FONT.body, textAlign: "center" }}>
+            Tip: Each question is answered independently — include the topic again in follow-up questions for best results.
+          </p>
+        </div>
       </div>
     </div>
   );
