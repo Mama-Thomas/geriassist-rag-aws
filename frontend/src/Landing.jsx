@@ -585,7 +585,7 @@ function LiveDemo() {
           ))}
         </div>
         <span style={{ fontSize: 10, color: "rgba(255,255,255,0.2)", fontFamily: "monospace", letterSpacing: "0.08em" }}>
-          LIVE DEMO · {cycleCount > 0 ? `${cycleCount} cycle${cycleCount > 1 ? "s" : ""}` : "initializing"}
+          LIVE DEMO
         </span>
       </div>
     </div>
