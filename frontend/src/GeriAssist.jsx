@@ -518,18 +518,21 @@ function FollowUps({ question, result, onSelect, apiBase }) {
 
   useEffect(() => {
     if (!result?.answer || !question) return;
+    const controller = new AbortController();
     setSug([]);
     setLoadingFu(true);
     fetch(`${apiBase}/followups`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ question, answer: result.answer }),
+      signal: controller.signal,
     })
       .then((r) => r.json())
-      .then((data) => setSug(data.suggestions || []))
-      .catch(() => setSug([]))
-      .finally(() => setLoadingFu(false));
-  }, [question, result]);
+      .then((data) => { if (!controller.signal.aborted) setSug(data.suggestions || []); })
+      .catch((e) => { if (e.name !== "AbortError") setSug([]); })
+      .finally(() => { if (!controller.signal.aborted) setLoadingFu(false); });
+    return () => controller.abort();
+  }, [question, result?.answer]);
 
   if (!result) return null;
 
@@ -1112,6 +1115,7 @@ export default function GeriAssist({ onBack }) {
                       />
                       {isLast && (
                         <FollowUps
+                          key={entry.id}
                           question={entry.question}
                           result={entry.result}
                           onSelect={(s) => submit(s)}
