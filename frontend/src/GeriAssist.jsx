@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 
 // ── Design: Editorial Clinical ──
 // White background, burgundy accents, no gradients, no shadows
@@ -528,9 +529,15 @@ function FollowUps({ question, result, onSelect, apiBase }) {
       signal: controller.signal,
     })
       .then((r) => r.json())
-      .then((data) => { if (!controller.signal.aborted) setSug(data.suggestions || []); })
-      .catch((e) => { if (e.name !== "AbortError") setSug([]); })
-      .finally(() => { if (!controller.signal.aborted) setLoadingFu(false); });
+      .then((data) => {
+        if (!controller.signal.aborted) setSug(data.suggestions || []);
+      })
+      .catch((e) => {
+        if (e.name !== "AbortError") setSug([]);
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setLoadingFu(false);
+      });
     return () => controller.abort();
   }, [question, result?.answer]);
 
@@ -792,7 +799,9 @@ const EXAMPLES = [
 ];
 
 // ── Main ──
-export default function GeriAssist({ onBack }) {
+export default function GeriAssist() {
+  const navigate = useNavigate();
+  const onBack = () => navigate("/");
   const [q, setQ] = useState("");
   const [mode, setMode] = useState("agent");
   const [loading, setLoading] = useState(false);
@@ -1115,7 +1124,6 @@ export default function GeriAssist({ onBack }) {
                       />
                       {isLast && (
                         <FollowUps
-                          key={entry.id}
                           question={entry.question}
                           result={entry.result}
                           onSelect={(s) => submit(s)}

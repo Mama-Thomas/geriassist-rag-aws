@@ -1,15 +1,15 @@
-import { useState } from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Landing from "./Landing";
 import GeriAssist from "./GeriAssist";
 
-function App() {
-  const [page, setPage] = useState("landing");
-
-  if (page === "chat") {
-    return <GeriAssist onBack={() => setPage("landing")} />;
-  }
-
-  return <Landing onEnterChat={() => setPage("chat")} />;
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/chat" element={<GeriAssist />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
-
-export default App;
