@@ -117,7 +117,7 @@ function Md({ text }) {
       );
     }
     // Bullet (handles "- ", "• ", "●- ", "● - ", etc.)
-    else if (/^[●•\-]\s*[-●•]?\s*/.test(trimmed)) {
+    else if (/^[●•-]\s*[-●•]?\s*/.test(trimmed)) {
       const rest = trimmed.replace(/^[●•\-]\s*[-●•]?\s*/, "");
       els.push(
         <div
@@ -514,12 +514,12 @@ function Trace({ metadata }) {
 // ── Follow-ups ──
 function FollowUps({ question, result, onSelect, apiBase }) {
   const [sug, setSug] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loadingFu, setLoadingFu] = useState(false);
 
   useEffect(() => {
     if (!result?.answer || !question) return;
     setSug([]);
-    setLoading(true);
+    setLoadingFu(true);
     fetch(`${apiBase}/followups`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -528,29 +528,60 @@ function FollowUps({ question, result, onSelect, apiBase }) {
       .then((r) => r.json())
       .then((data) => setSug(data.suggestions || []))
       .catch(() => setSug([]))
-      .finally(() => setLoading(false));
+      .finally(() => setLoadingFu(false));
   }, [question, result]);
 
   if (!result) return null;
 
-  if (loading) return (
-    <div style={{ marginTop: 20 }}>
-      <div style={{ fontSize: 10, fontWeight: 600, color: C.textMuted, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 8, fontFamily: FONT.body }}>
-        Follow-up
+  if (loadingFu)
+    return (
+      <div style={{ marginTop: 20 }}>
+        <div
+          style={{
+            fontSize: 10,
+            fontWeight: 600,
+            color: C.textMuted,
+            textTransform: "uppercase",
+            letterSpacing: "0.1em",
+            marginBottom: 8,
+            fontFamily: "'DM Sans', sans-serif",
+          }}
+        >
+          Follow-up
+        </div>
+        <div style={{ display: "flex", gap: 6 }}>
+          {[120, 160, 140].map((w, i) => (
+            <div
+              key={i}
+              style={{
+                height: 28,
+                width: w,
+                borderRadius: 20,
+                background: C.surfaceAlt,
+                animation: "pulse 1.5s ease-in-out infinite",
+                animationDelay: `${i * 0.15}s`,
+              }}
+            />
+          ))}
+        </div>
       </div>
-      <div style={{ display: "flex", gap: 6 }}>
-        {[120, 160, 140].map((w, i) => (
-          <div key={i} style={{ height: 28, width: w, borderRadius: 4, background: C.surfaceAlt, animation: "pulse 1.5s ease-in-out infinite", animationDelay: `${i * 0.15}s` }} />
-        ))}
-      </div>
-    </div>
-  );
+    );
 
   if (!sug.length) return null;
 
   return (
     <div style={{ marginTop: 20 }}>
-      <div style={{ fontSize: 10, fontWeight: 600, color: C.textMuted, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 8, fontFamily: FONT.body }}>
+      <div
+        style={{
+          fontSize: 10,
+          fontWeight: 600,
+          color: C.textMuted,
+          textTransform: "uppercase",
+          letterSpacing: "0.1em",
+          marginBottom: 8,
+          fontFamily: "'DM Sans', sans-serif",
+        }}
+      >
         Follow-up
       </div>
       <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
@@ -558,9 +589,25 @@ function FollowUps({ question, result, onSelect, apiBase }) {
           <button
             key={i}
             onClick={() => onSelect(s)}
-            style={{ padding: "5px 12px", borderRadius: 4, border: `1px solid ${C.border}`, background: C.white, color: C.textSecondary, fontSize: 12, cursor: "pointer", fontFamily: FONT.body, transition: "all 0.15s" }}
-            onMouseEnter={(e) => { e.currentTarget.style.borderColor = C.burgundy; e.currentTarget.style.color = C.burgundy; }}
-            onMouseLeave={(e) => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.color = C.textSecondary; }}
+            style={{
+              padding: "5px 14px",
+              borderRadius: 20,
+              border: `1px solid ${C.border}`,
+              background: "transparent",
+              color: C.textSecondary,
+              fontSize: 12,
+              cursor: "pointer",
+              fontFamily: "'DM Sans', sans-serif",
+              transition: "all 0.15s",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = C.burgundy;
+              e.currentTarget.style.color = C.burgundy;
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = C.border;
+              e.currentTarget.style.color = C.textSecondary;
+            }}
           >
             {s}
           </button>
@@ -741,7 +788,7 @@ const EXAMPLES = [
 ];
 
 // ── Main ──
-export default function GeriAssist() {
+export default function GeriAssist({ onBack }) {
   const [q, setQ] = useState("");
   const [mode, setMode] = useState("agent");
   const [loading, setLoading] = useState(false);
@@ -773,7 +820,10 @@ export default function GeriAssist() {
     const entryMode = mode;
     const id = Date.now();
     // Add pending entry immediately so user sees their question
-    setThread((p) => [...p, { id, question: text, mode: entryMode, result: null, error: null }]);
+    setThread((p) => [
+      ...p,
+      { id, question: text, mode: entryMode, result: null, error: null },
+    ]);
     const ep = entryMode === "agent" ? "/query/agent" : "/query";
     try {
       const res = await fetch(`${API}${ep}`, {
@@ -786,10 +836,21 @@ export default function GeriAssist() {
         throw new Error(e.detail || "Failed");
       }
       const data = await res.json();
-      setThread((p) => p.map((entry) => entry.id === id ? { ...entry, result: data } : entry));
-      fetch(`${API}/stats`).then((r) => r.json()).then(setStats).catch(() => {});
+      setThread((p) =>
+        p.map((entry) =>
+          entry.id === id ? { ...entry, result: data } : entry,
+        ),
+      );
+      fetch(`${API}/stats`)
+        .then((r) => r.json())
+        .then(setStats)
+        .catch(() => {});
     } catch (e) {
-      setThread((p) => p.map((entry) => entry.id === id ? { ...entry, error: e.message } : entry));
+      setThread((p) =>
+        p.map((entry) =>
+          entry.id === id ? { ...entry, error: e.message } : entry,
+        ),
+      );
     } finally {
       setLoading(false);
     }
@@ -798,121 +859,159 @@ export default function GeriAssist() {
   const clearThread = () => setThread([]);
 
   return (
-    <div style={{ height: "100vh", display: "flex", flexDirection: "column", background: C.bg, color: C.text, overflow: "hidden" }}>
+    <div
+      style={{
+        height: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        background: C.bg,
+        color: C.text,
+        overflow: "hidden",
+      }}
+    >
       <link
-        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet"
       />
+      <style>{`@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}} @keyframes dot{0%,80%,100%{opacity:.2}40%{opacity:1}} @keyframes pulse{0%,100%{opacity:.4}50%{opacity:.8}}`}</style>
 
-      <div style={{ flexShrink: 0, maxWidth: 740, width: "100%", margin: "0 auto", padding: "0 24px" }}>
+      <div
+        style={{
+          flexShrink: 0,
+          maxWidth: 820,
+          width: "100%",
+          margin: "0 auto",
+          padding: "0 32px",
+        }}
+      >
         {/* Header */}
         <header
           style={{
-            paddingTop: 56,
-            paddingBottom: 32,
+            paddingTop: 16,
+            paddingBottom: 14,
             borderBottom: `1px solid ${C.border}`,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
           }}
         >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 12,
-              marginBottom: 8,
-            }}
-          >
-            <div
-              style={{
-                width: 32,
-                height: 32,
-                borderRadius: 4,
-                background: C.burgundy,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: 16,
-                fontWeight: 700,
-                color: C.white,
-              }}
-            >
-              G
-            </div>
-            <h1
-              style={{
-                fontSize: 28,
-                fontWeight: 600,
-                margin: 0,
-                fontFamily: FONT.display,
-                color: C.text,
-                letterSpacing: "-0.01em",
-              }}
-            >
-              GeriAssist
-            </h1>
-          </div>
-          <p
-            style={{
-              fontSize: 13,
-              color: C.textMuted,
-              margin: 0,
-              fontFamily: FONT.body,
-              lineHeight: 1.5,
-            }}
-          >
-            Geriatric Clinical Knowledge System · Retrieval-Augmented Generation
-            with Agentic Search
-          </p>
-        </header>
-
-        {/* Stats bar */}
-        {stats && (
-          <div
-            style={{
-              display: "flex",
-              gap: 24,
-              padding: "16px 0",
-              borderBottom: `1px solid ${C.border}`,
-            }}
-          >
-            {[
-              { l: "research papers indexed", v: stats.documents },
-              { l: "text chunks", v: stats.chunks?.toLocaleString() },
-              { l: "vector embeddings", v: stats.vectors?.toLocaleString() },
-              { l: "queries processed", v: stats.queries_logged },
-            ].map(({ l, v }) => (
-              <div key={l}>
-                <span
-                  style={{
-                    fontSize: 15,
-                    fontWeight: 600,
-                    fontFamily: FONT.mono,
-                    color: C.text,
-                  }}
-                >
-                  {v}
-                </span>
-                <span
-                  style={{
-                    fontSize: 10,
-                    color: C.textMuted,
-                    marginLeft: 6,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.05em",
-                    fontFamily: FONT.body,
-                  }}
-                >
-                  {l}
-                </span>
+          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+            {onBack && (
+              <button
+                onClick={onBack}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 4,
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  color: C.textLight,
+                  fontSize: 12,
+                  fontFamily: "'DM Sans', sans-serif",
+                  padding: 0,
+                  transition: "color 0.15s",
+                }}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.color = C.textMuted)
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.color = C.textLight)
+                }
+              >
+                ← overview
+              </button>
+            )}
+            {onBack && (
+              <div style={{ width: 1, height: 14, background: C.border }} />
+            )}
+            <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
+              <div
+                style={{
+                  width: 28,
+                  height: 28,
+                  borderRadius: 6,
+                  background: C.burgundy,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: 13,
+                  fontWeight: 800,
+                  color: "white",
+                  fontFamily: "'Playfair Display', serif",
+                }}
+              >
+                G
               </div>
-            ))}
+              <span
+                style={{
+                  fontSize: 17,
+                  fontWeight: 700,
+                  fontFamily: "'Playfair Display', serif",
+                  color: C.text,
+                  letterSpacing: "-0.02em",
+                }}
+              >
+                GeriAssist
+              </span>
+            </div>
           </div>
-        )}
+          {stats && (
+            <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
+              {[
+                { v: stats.documents?.toLocaleString(), l: "research papers" },
+                { v: stats.chunks?.toLocaleString(), l: "text chunks" },
+                { v: stats.vectors?.toLocaleString(), l: "vectors" },
+              ].map(({ v, l }, i) => (
+                <div
+                  key={l}
+                  style={{
+                    display: "flex",
+                    alignItems: "baseline",
+                    gap: 3,
+                    paddingLeft: i > 0 ? 16 : 0,
+                    borderLeft: i > 0 ? `1px solid ${C.border}` : "none",
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: 13,
+                      fontWeight: 700,
+                      fontFamily: "'JetBrains Mono', monospace",
+                      color: C.text,
+                    }}
+                  >
+                    {v}
+                  </span>
+                  <span
+                    style={{
+                      fontSize: 9,
+                      color: C.textMuted,
+                      textTransform: "uppercase",
+                      letterSpacing: "0.08em",
+                      fontFamily: "'DM Sans', sans-serif",
+                    }}
+                  >
+                    {l}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </header>
+      </div>
+      {/* end static top */}
 
-      </div>{/* end static top */}
-
-      {/* ── Scrollable messages area ── */}
-      <div style={{ flex: 1, overflowY: "auto", maxWidth: 740, width: "100%", margin: "0 auto", padding: "0 24px 20px" }}>
-
+      <div
+        style={{
+          flex: 1,
+          overflowY: "auto",
+          maxWidth: 820,
+          width: "100%",
+          margin: "0 auto",
+          padding: "0 32px 20px",
+        }}
+      >
         {/* ── Conversation thread ── */}
         {thread.length > 0 && (
           <div style={{ marginTop: 32 }}>
@@ -1010,88 +1109,166 @@ export default function GeriAssist() {
         {thread.length === 0 && !loading && (
           <div
             style={{
-              marginTop: 48,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              minHeight: 280,
               textAlign: "center",
-              color: C.textLight,
-              fontFamily: FONT.body,
-              fontSize: 14,
             }}
           >
-            <div style={{ fontSize: 28, marginBottom: 12, opacity: 0.4 }}>◈</div>
-            Ask a geriatric clinical question to begin
+            <div
+              style={{
+                width: 52,
+                height: 52,
+                borderRadius: 12,
+                background: C.burgundySoft,
+                border: `1px solid ${C.burgundyBorder}`,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: 20,
+                color: C.burgundy,
+                marginBottom: 18,
+                fontFamily: "'JetBrains Mono', monospace",
+              }}
+            >
+              ◈
+            </div>
+            <h2
+              style={{
+                fontSize: 20,
+                fontWeight: 700,
+                fontFamily: "'Playfair Display', serif",
+                color: C.text,
+                marginBottom: 8,
+                letterSpacing: "-0.02em",
+                margin: "0 0 8px",
+              }}
+            >
+              Ask a clinical question
+            </h2>
+            <p
+              style={{
+                fontSize: 14,
+                color: C.textMuted,
+                fontFamily: "'DM Sans', sans-serif",
+                maxWidth: 300,
+                lineHeight: 1.65,
+                fontWeight: 300,
+              }}
+            >
+              Evidence-based answers from 1,963+ peer-reviewed geriatric
+              research papers.
+            </p>
           </div>
         )}
 
         {/* Clear thread */}
         {thread.length > 0 && !loading && (
-          <div style={{ textAlign: "center", marginTop: 8, marginBottom: 16 }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              marginTop: 20,
+              marginBottom: 8,
+            }}
+          >
             <button
               onClick={clearThread}
               style={{
-                background: C.white,
+                background: "none",
                 border: `1px solid ${C.border}`,
-                borderRadius: 4,
+                borderRadius: 20,
                 fontSize: 12,
-                color: C.textSecondary,
-                fontFamily: FONT.body,
+                color: C.textMuted,
+                fontFamily: "'DM Sans', sans-serif",
                 cursor: "pointer",
-                padding: "6px 14px",
-                transition: "all 0.15s",
-                display: "flex",
-                alignItems: "center",
-                gap: 6,
+                padding: "6px 18px",
+                transition: "all 0.2s",
+                fontWeight: 500,
               }}
-              onMouseEnter={(e) => { e.currentTarget.style.borderColor = C.burgundy; e.currentTarget.style.color = C.burgundy; }}
-              onMouseLeave={(e) => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.color = C.textSecondary; }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = C.burgundy;
+                e.currentTarget.style.color = C.burgundy;
+                e.currentTarget.style.background = C.burgundySoft;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = C.border;
+                e.currentTarget.style.color = C.textMuted;
+                e.currentTarget.style.background = "none";
+              }}
             >
-              ↺ Clear conversation
+              ↺ New conversation
             </button>
           </div>
         )}
 
         {/* Footer */}
-        <div style={{ textAlign: "center", padding: "16px 0 24px", fontSize: 11, color: C.textLight, fontFamily: FONT.body }}>
-          GeriAssist v0.1.0 ·{" "}
-          {stats ? `${stats.documents} documents · ${stats.vectors?.toLocaleString()} vectors` : "…"}{" "}
-          · FastAPI + FAISS + OpenAI · Built by Mama Thomas
+        <div
+          style={{
+            textAlign: "center",
+            padding: "16px 0 20px",
+            fontSize: 11,
+            color: C.textLight,
+            fontFamily: "'DM Sans', sans-serif",
+          }}
+        >
+          GeriAssist · Built by Mama Thomas
         </div>
-      </div>{/* end scrollable messages */}
+      </div>
+      {/* end scrollable */}
 
       {/* ── Fixed bottom input bar ── */}
-      <div style={{ flexShrink: 0, borderTop: `1px solid ${C.border}`, background: C.bg, padding: "14px 0 0" }}>
-        <div style={{ maxWidth: 740, margin: "0 auto", padding: "0 24px 16px" }}>
-
-          {/* Mode toggle */}
-          <div style={{ display: "flex", gap: 0, marginBottom: 12 }}>
-            {["agent", "standard"].map((key) => (
+      <div
+        style={{
+          flexShrink: 0,
+          background: C.bg,
+          borderTop: `1px solid ${C.border}`,
+        }}
+      >
+        <div
+          style={{ maxWidth: 820, margin: "0 auto", padding: "12px 32px 16px" }}
+        >
+          <div style={{ display: "flex", gap: 6, marginBottom: 10 }}>
+            {[
+              { key: "agent", label: "Agent RAG", sub: "multi-step" },
+              { key: "standard", label: "Standard RAG", sub: "single-step" },
+            ].map(({ key, label, sub }) => (
               <button
                 key={key}
                 onClick={() => setMode(key)}
                 style={{
-                  padding: "6px 14px",
-                  border: `1px solid ${C.border}`,
+                  padding: "5px 14px",
+                  borderRadius: 20,
                   cursor: "pointer",
-                  fontSize: 11,
-                  fontWeight: mode === key ? 700 : 500,
-                  fontFamily: FONT.body,
-                  transition: "all 0.15s",
-                  borderRadius: key === "agent" ? "4px 0 0 4px" : "0 4px 4px 0",
-                  marginLeft: key === "standard" ? -1 : 0,
-                  background: mode === key ? C.burgundy : C.white,
-                  color: mode === key ? C.white : C.textSecondary,
-                  borderColor: mode === key ? C.burgundy : C.border,
-                  zIndex: mode === key ? 1 : 0,
-                  position: "relative",
-                  letterSpacing: mode === key ? "0.01em" : 0,
+                  fontSize: 12,
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontWeight: 500,
+                  transition: "all 0.2s",
+                  border: `1.5px solid ${mode === key ? C.burgundy : C.border}`,
+                  background: mode === key ? C.burgundy : "transparent",
+                  color: mode === key ? "white" : C.textMuted,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 5,
                 }}
               >
-                {key === "agent" ? "Agent RAG (multi-step)" : "Standard RAG (single step)"}
+                {label}
+                <span
+                  style={{
+                    fontSize: 9,
+                    opacity: mode === key ? 0.75 : 0.5,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.06em",
+                  }}
+                >
+                  {sub}
+                </span>
               </button>
             ))}
           </div>
-
-          {/* Input row */}
-          <div style={{ display: "flex", gap: 10 }}>
+          <div style={{ display: "flex", gap: 10, alignItems: "flex-end" }}>
             <textarea
               ref={ref}
               value={q}
@@ -1107,12 +1284,12 @@ export default function GeriAssist() {
               style={{
                 flex: 1,
                 background: C.white,
-                border: `1px solid ${C.border}`,
-                borderRadius: 4,
-                padding: "10px 14px",
+                border: `1.5px solid ${C.border}`,
+                borderRadius: 8,
+                padding: "11px 16px",
                 color: C.text,
                 fontSize: 14,
-                fontFamily: FONT.body,
+                fontFamily: "'DM Sans', sans-serif",
                 resize: "none",
                 outline: "none",
                 lineHeight: 1.6,
@@ -1125,46 +1302,85 @@ export default function GeriAssist() {
               onClick={() => submit()}
               disabled={loading || !q.trim()}
               style={{
-                padding: "0 20px",
-                borderRadius: 4,
-                border: `1px solid ${C.burgundy}`,
+                padding: "11px 22px",
+                borderRadius: 8,
+                border: "none",
                 cursor: loading ? "wait" : "pointer",
-                background: C.burgundy,
-                color: C.white,
+                background: q.trim() ? C.burgundy : C.border,
+                color: "white",
                 fontSize: 13,
                 fontWeight: 600,
-                fontFamily: FONT.body,
-                transition: "all 0.15s",
-                opacity: !q.trim() ? 0.4 : 1,
+                fontFamily: "'DM Sans', sans-serif",
+                transition: "all 0.2s",
                 whiteSpace: "nowrap",
+                flexShrink: 0,
+                height: 46,
               }}
-              onMouseEnter={(e) => { if (!loading) e.currentTarget.style.background = C.burgundyLight; }}
-              onMouseLeave={(e) => (e.currentTarget.style.background = C.burgundy)}
+              onMouseEnter={(e) => {
+                if (q.trim() && !loading)
+                  e.currentTarget.style.background = C.burgundyLight;
+              }}
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.background = q.trim()
+                  ? C.burgundy
+                  : C.border)
+              }
             >
-              {loading ? "Searching…" : "Ask"}
+              {loading ? "···" : "Ask →"}
             </button>
           </div>
-
-          {/* Example chips — only before conversation starts */}
           {thread.length === 0 && (
-            <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginTop: 8 }}>
+            <div
+              style={{
+                display: "flex",
+                gap: 6,
+                flexWrap: "wrap",
+                marginTop: 8,
+              }}
+            >
               {EXAMPLES.map((ex, i) => (
                 <button
                   key={i}
-                  onClick={() => { setQ(ex); ref.current?.focus(); }}
-                  style={{ padding: "3px 9px", borderRadius: 3, border: `1px solid ${C.border}`, background: C.white, color: C.textMuted, fontSize: 11, cursor: "pointer", fontFamily: FONT.body, transition: "all 0.15s" }}
-                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = C.burgundy; e.currentTarget.style.color = C.burgundy; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.color = C.textMuted; }}
+                  onClick={() => {
+                    setQ(ex);
+                    ref.current?.focus();
+                  }}
+                  style={{
+                    padding: "4px 11px",
+                    borderRadius: 20,
+                    border: `1px solid ${C.border}`,
+                    background: "transparent",
+                    color: C.textMuted,
+                    fontSize: 11,
+                    cursor: "pointer",
+                    fontFamily: "'DM Sans', sans-serif",
+                    transition: "all 0.15s",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = C.burgundy;
+                    e.currentTarget.style.color = C.burgundy;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = C.border;
+                    e.currentTarget.style.color = C.textMuted;
+                  }}
                 >
                   {ex.length > 48 ? ex.slice(0, 48) + "…" : ex}
                 </button>
               ))}
             </div>
           )}
-
-          {/* Tip text */}
-          <p style={{ margin: "8px 0 0", fontSize: 11, color: C.textLight, fontFamily: FONT.body, textAlign: "center" }}>
-            Tip: Each question is answered independently. Include the topic again in follow-up questions for best results.
+          <p
+            style={{
+              margin: "6px 0 0",
+              fontSize: 11,
+              color: C.textMuted,
+              fontFamily: "'DM Sans', sans-serif",
+              textAlign: "center",
+            }}
+          >
+            Each question is answered independently. Include the topic in
+            follow-up questions for best results.
           </p>
         </div>
       </div>
