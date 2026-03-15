@@ -59,6 +59,11 @@ Rules:
 {sufficiency_note}
 """
 
+# ── Token / chunk caps ───────────────────────
+MAX_CHUNKS_TOTAL = 12          # never send more than this to the generator
+MAX_CHUNKS_LOW_CONFIDENCE = 8  # cap if confidence stays below threshold
+LOW_CONF_THRESHOLD = 0.5       # stop early if confidence never exceeds this
+
 CONFIDENT_NOTE = ""
 CAUTIOUS_NOTE = """
 IMPORTANT: The retrieval system found limited information on some aspects of this question.
@@ -195,21 +200,28 @@ def research_query(
 
     # Evaluate sufficiency and potentially do more rounds
     current_round = 2
+    last_confidence = 0.0  # tracked across rounds
     while current_round <= max_rounds:
         context = _build_context_string(all_chunks)
         eval_result = _evaluate_sufficiency(question, context)
         total_eval_tokens += eval_result.get("eval_tokens", 0)
 
+        last_confidence = eval_result.get("confidence", 0)
+
         agent_steps.append({
             "round": current_round,
             "action": "evaluate",
             "is_sufficient": eval_result.get("is_sufficient", True),
-            "confidence": eval_result.get("confidence", 0),
+            "confidence": last_confidence,
             "missing_aspects": eval_result.get("missing_aspects", []),
         })
 
-        # If sufficient or no reformulated query, stop
+        # Stop if sufficient
         if eval_result.get("is_sufficient", True):
+            break
+
+        # Stop early if confidence is already too low — another search won't help
+        if last_confidence <= LOW_CONF_THRESHOLD and current_round >= 2:
             break
 
         reformulated = eval_result.get("reformulated_query", "")
@@ -236,20 +248,16 @@ def research_query(
             "new_chunks_added": added,
         })
 
-        # If no new chunks found, increment round but keep trying (different angle next eval)
         current_round += 1
-
-    # Determine if we should be cautious based on last sufficiency eval
-    last_confidence = 1.0
-    for step in reversed(agent_steps):
-        if step.get("action") == "evaluate":
-            last_confidence = step.get("confidence", 1.0)
-            break
 
     sufficiency_note = CAUTIOUS_NOTE if last_confidence < 0.7 else CONFIDENT_NOTE
 
-    # Generate final answer with all collected context
-    context = _build_context_string(all_chunks)
+    # Cap chunks to avoid huge token bills on low-confidence answers
+    chunk_cap = MAX_CHUNKS_LOW_CONFIDENCE if last_confidence < LOW_CONF_THRESHOLD else MAX_CHUNKS_TOTAL
+    capped_chunks = all_chunks[:chunk_cap]
+
+    # Generate final answer with capped context
+    context = _build_context_string(capped_chunks)
     user_prompt = (
         f"Context:\n{context}\n\n---\n\n"
         f"Question: {question}\n\n"
@@ -289,7 +297,7 @@ def research_query(
     
     source_counts = {}
     citations = []
-    for c in all_chunks:
+    for c in capped_chunks:
         source_name = c["title"]
         count = source_counts.get(source_name, 0)
         if count < 2:
