@@ -656,10 +656,83 @@ function Answer({ result, mode, onRetry }) {
           <Stat
             label="Confidence"
             value={`${Math.round(result.sufficiency_confidence * 100)}%`}
-            accent={result.sufficiency_confidence >= 0.7 ? C.green : C.amber}
+            accent={
+              result.sufficiency_confidence >= 0.8
+                ? C.green
+                : result.sufficiency_confidence >= 0.6
+                  ? C.amber
+                  : C.red
+            }
           />
         )}
       </div>
+
+      {/* Confidence banner — only for agent mode with low confidence */}
+      {isAgent &&
+        result.sufficiency_confidence != null &&
+        (() => {
+          const c = result.sufficiency_confidence;
+          if (c >= 0.8) return null;
+          const band =
+            c >= 0.6
+              ? {
+                  label: "Moderate confidence",
+                  msg: "The knowledge base partially covers this topic. Results may be incomplete.",
+                  bg: C.amberSoft,
+                  border: "rgba(160,114,42,0.2)",
+                  color: C.amber,
+                }
+              : c >= 0.4
+                ? {
+                    label: "Limited evidence in corpus",
+                    msg: "Few relevant sources were found. Consider rephrasing or asking a broader question.",
+                    bg: "rgba(155,44,44,0.05)",
+                    border: C.burgundyBorder,
+                    color: C.burgundy,
+                  }
+                : {
+                    label: "Insufficient evidence",
+                    msg: "The knowledge base does not have enough information on this specific topic. The answer below is based on loosely related sources.",
+                    bg: "rgba(155,44,44,0.08)",
+                    border: C.burgundyBorder,
+                    color: C.red,
+                  };
+          return (
+            <div
+              style={{
+                marginBottom: 16,
+                padding: "10px 14px",
+                borderRadius: 6,
+                background: band.bg,
+                border: `1px solid ${band.border}`,
+              }}
+            >
+              <div
+                style={{
+                  fontSize: 11,
+                  fontWeight: 700,
+                  color: band.color,
+                  fontFamily: "'DM Sans', sans-serif",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.06em",
+                  marginBottom: 3,
+                }}
+              >
+                ⚠ {band.label}
+              </div>
+              <div
+                style={{
+                  fontSize: 12,
+                  color: C.textSecondary,
+                  fontFamily: "'DM Sans', sans-serif",
+                  lineHeight: 1.5,
+                }}
+              >
+                {band.msg}
+              </div>
+            </div>
+          );
+        })()}
 
       {/* Response */}
       <div>
