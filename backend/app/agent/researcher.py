@@ -20,7 +20,7 @@ load_dotenv()
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-SUFFICIENCY_PROMPT = """You are evaluating whether retrieved context is sufficient to answer a question about geriatric medicine.
+SUFFICIENCY_PROMPT = """You are a strict evaluator deciding whether retrieved context is sufficient to answer a SPECIFIC clinical question about geriatric medicine.
 
 Question: {question}
 
@@ -36,15 +36,22 @@ Evaluate and respond with ONLY valid JSON (no markdown):
 }}
 
 Rules:
-- is_sufficient: true if the context contains enough information to give a useful, grounded answer
-- confidence: how confident you are that a good answer can be generated (0.0 = no relevant info, 1.0 = perfect coverage)
-  - 0.9-1.0: context directly addresses the question with multiple relevant sources
-  - 0.7-0.9: context covers the main question well, minor gaps only
-  - 0.5-0.7: context is partially relevant but missing key aspects
-  - 0.0-0.5: context has little to no relevant information
-- Do NOT penalize confidence for exhaustiveness — if the main question can be answered well, score 0.85+
+- is_sufficient: true ONLY if the context DIRECTLY and SPECIFICALLY addresses the exact question asked
+- confidence: how well the context answers THIS SPECIFIC question (not the general topic area)
+  - 0.9-1.0: context directly and specifically addresses the question with multiple relevant sources
+  - 0.7-0.9: context covers the main question well, only minor gaps
+  - 0.5-0.7: context is partially relevant but missing key specific aspects
+  - 0.3-0.5: context is only tangentially related — covers the general area but not the specific question
+  - 0.0-0.3: context has little to no information specifically relevant to this question
+
+CRITICAL RULES:
+- If the context only covers the GENERAL TOPIC but not the SPECIFIC QUESTION, confidence must be below 0.5
+- Example: question asks about "anesthesia and falls" but chunks only discuss "medications and falls" → confidence 0.3-0.4, NOT 0.85
+- Example: question asks about "falls in Seattle" but chunks only have national US statistics → confidence 0.2, NOT 0.7
+- Do NOT inflate confidence just because the chunks are about the same broad subject area
+- Only score 0.8+ if the chunks would let you write a specific, cited answer to the exact question asked
 - If is_sufficient is true, reformulated_query should be empty string
-- If is_sufficient is false, suggest a different search angle to find the missing information
+- If is_sufficient is false, suggest a more specific search angle to find the missing information
 """
 
 GENERATION_PROMPT = """You are GeriAssist, a clinical knowledge assistant specialized in geriatric medicine.
