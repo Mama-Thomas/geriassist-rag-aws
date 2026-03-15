@@ -712,6 +712,7 @@ function Answer({ result, mode, onRetry }) {
             lineHeight: 1.85,
             color: C.textSecondary,
             fontFamily: FONT.body,
+            className: "chat-answer",
           }}
         >
           <Md text={result.answer} />
@@ -873,7 +874,22 @@ export default function GeriAssist({ onBack }) {
         href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet"
       />
-      <style>{`@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}} @keyframes dot{0%,80%,100%{opacity:.2}40%{opacity:1}} @keyframes pulse{0%,100%{opacity:.4}50%{opacity:.8}}`}</style>
+      <style>{`
+        @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes dot{0%,80%,100%{opacity:.2}40%{opacity:1}}
+        @keyframes pulse{0%,100%{opacity:.4}50%{opacity:.8}}
+        @media (max-width: 640px) {
+          .chat-header { padding: 12px 16px !important; }
+          .chat-header-stats { display: none !important; }
+          .chat-scroll { padding: 0 16px 20px !important; }
+          .chat-bottom { padding: 10px 16px 14px !important; }
+          .chat-bubble { max-width: 92% !important; font-size: 13px !important; }
+          .chat-answer { font-size: 13px !important; }
+          .chat-stats { gap: 12px !important; }
+          .chat-mode-pills { flex-wrap: wrap !important; }
+          .chat-textarea { font-size: 14px !important; }
+        }
+      `}</style>
 
       <div
         style={{
@@ -886,6 +902,7 @@ export default function GeriAssist({ onBack }) {
       >
         {/* Header */}
         <header
+          className="chat-header"
           style={{
             paddingTop: 16,
             paddingBottom: 14,
@@ -957,7 +974,10 @@ export default function GeriAssist({ onBack }) {
             </div>
           </div>
           {stats && (
-            <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
+            <div
+              className="chat-header-stats"
+              style={{ display: "flex", gap: 16, alignItems: "center" }}
+            >
               {[
                 { v: stats.documents?.toLocaleString(), l: "research papers" },
                 { v: stats.chunks?.toLocaleString(), l: "text chunks" },
@@ -1003,6 +1023,7 @@ export default function GeriAssist({ onBack }) {
       {/* end static top */}
 
       <div
+        className="chat-scroll"
         style={{
           flex: 1,
           overflowY: "auto",
@@ -1038,6 +1059,7 @@ export default function GeriAssist({ onBack }) {
                     <div
                       style={{
                         maxWidth: "80%",
+                        className: "chat-bubble",
                         background: C.surfaceAlt,
                         border: `1px solid ${C.border}`,
                         borderRadius: "8px 8px 2px 8px",
@@ -1228,9 +1250,13 @@ export default function GeriAssist({ onBack }) {
         }}
       >
         <div
+          className="chat-bottom"
           style={{ maxWidth: 820, margin: "0 auto", padding: "12px 32px 16px" }}
         >
-          <div style={{ display: "flex", gap: 6, marginBottom: 10 }}>
+          <div
+            className="chat-mode-pills"
+            style={{ display: "flex", gap: 6, marginBottom: 10 }}
+          >
             {[
               { key: "agent", label: "Agent RAG", sub: "multi-step" },
               { key: "standard", label: "Standard RAG", sub: "single-step" },
