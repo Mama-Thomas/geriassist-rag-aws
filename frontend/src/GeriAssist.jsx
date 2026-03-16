@@ -883,7 +883,7 @@ export default function GeriAssist() {
   const ref = useRef(null);
   const bottomRef = useRef(null);
 
-  const API = "http://localhost:8000";
+  const API = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
   useEffect(() => {
     fetch(`${API}/stats`)
